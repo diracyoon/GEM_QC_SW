@@ -26,12 +26,7 @@ void Client::Run()
 
   //start test
   QC_Long();
-  
-  while(1)
-    {
-      this_thread::sleep_for(chrono::milliseconds(100));
-    }
-  
+    
   Disconnect_From_Server();
   
   return;
@@ -101,9 +96,6 @@ void Client::Initialization_QC()
   
   //trun on power
   Request_HV_Control_Set("Pw", 1);
-
-  //set I
-  Request_HV_Control_Set("df", 1);
   
   return;
 }//void Client::Initialization_QC()
@@ -129,14 +121,66 @@ string Client::Receive_From_Server()
 
 //////////
 
-bool Client::Request_HV_Control_Set(const string& parameter, const int& value)
+void Client::Read_Config_Data()
+{
+  ifstream fin_config;
+  fin_config.open("/home/isyoon/GEM_QC2_Long_SW/Config");
+  if(!fin_config.is_open()) throw "class Client: Can not find the config file.";
+
+  string buf;
+  while(!fin_config.eof())
+    {
+      getline(fin_config, buf);
+      if(buf.empty()) break;
+      
+      istringstream iss(buf);
+
+      int time;
+      int vset;
+      
+      buf >> time;
+      buf >> vset;
+
+      Config_Data config_data;
+      vec_config_data.push_back(config_data);
+    }
+  
+  return;
+}//void Client::Read_Config_Data()
+
+//////////
+
+bool Client::Request_HV_Control_Get(const string& parameter, float& value)
+{
+  string transmit = "##GET## CH" + to_string(channel) + " " + parameter;
+  Transmit_To_Server(transmit);
+
+  string result = Receive_From_Server();
+  
+  if(result.find("##OK##")!=string::npos)
+    {
+      istringstream iss(result);
+
+      string buf;
+      iss >> buf;
+
+      iss >> value;
+      
+      return true;
+    }
+  else return false;
+}//bool Client::Request_HV_Control_Get(const string& parameter, int& value)
+
+//////////
+
+bool Client::Request_HV_Control_Set(const string& parameter, const float& value)
 {
   string transmit = "##SET## CH" + to_string(channel) + " " + parameter + " " + to_string(value);
   Transmit_To_Server(transmit);
 
   string result = Receive_From_Server();
 
-  if(result.find("##OK##")==string::npos) return true;
+  if(result.find("##OK##")!=string::npos) return true;
   else return false;
 }//void Client::Request_HV_Control_Set(const string& target, const int& value)
 
@@ -157,10 +201,36 @@ void Client::QC_Long()
 {
   Initialization_QC();
 
-  //finalize QC
+  QC_Long_Body();
+  
+  //finalize QC - turn off
   Request_HV_Control_Set("Pw", 0);
 
   return;
 }//void Client::QC_Long()
+
+//////////
+
+void Client::QC_Long_Body()
+{
+  Read_Config_Data();
+  
+  system_clock::time_point time_start = system_clock::now();
+  
+  while(1)
+    {
+      system_clock::time_point time_current = system_clock::now();;
+
+      duration<float> time_run = time_current - time_start;
+      cout << time_run.count() << endl;
+      
+      float value;
+      Request_HV_Control_Get("IMonL", value);
+
+      this_thread::sleep_for(chrono::seconds(1));
+    }  
+  
+  return;
+}//void Client::QC_Long_Body()
 
 //////////

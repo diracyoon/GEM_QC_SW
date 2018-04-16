@@ -6,3 +6,6 @@ Main.o : Main.C
 
 Client.o : Client.C
 	g++ -o Client.o -c Client.C -std=c++11
+
+clean :
+	rm *.o

@@ -2,7 +2,7 @@
 
 //////////
 
-Server::Server(const string& a_path_fifo) : hv_controller(), path_fifo_server(a_path_fifo)
+Server::Server(const string& a_path_fifo) : hv_controller("ttyUSB1"), path_fifo_server(a_path_fifo)
 {
   Initialization();
 }//Server::Server()
@@ -35,7 +35,7 @@ void Server::Run()
       if(msg.find("##SET##")!=string::npos) HV_Control_Set(msg);
       
       //request HV get
-      if(msg.find("##GET##")!=string::npos);
+      if(msg.find("##GET##")!=string::npos) HV_Control_Get(msg);
 
       this_thread::sleep_for(chrono::milliseconds(100));
     }
@@ -60,6 +60,32 @@ void Server::Erase_Client(const string& msg)
 
 //////////
 
+void Server::HV_Control_Get(const string& msg)
+{
+  istringstream iss(msg);
+
+  string buf;
+  iss >> buf;
+  iss >> buf;
+
+  int channel;
+  channel = stoi(buf.substr(2, 1), NULL);
+
+  string parameter;
+  iss >> parameter;
+
+  float value;
+
+  CAENHVRESULT result = hv_controller.Get(channel, parameter, value);
+
+  if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK## " + to_string(value));
+  else Transmit_To_Client(channel, "##BAD##");
+
+  return;
+}//void Server::HV_Control_Get(const string& msg)
+
+//////////
+
 void Server::HV_Control_Set(const string& msg)
 {
   istringstream iss(msg);
@@ -80,6 +106,7 @@ void Server::HV_Control_Set(const string& msg)
   CAENHVRESULT result = hv_controller.Set(channel, parameter, value);
 
   if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK##");
+  else Transmit_To_Client(channel, "##BAD##");
     
   return;
 }//void Server::HV_Control_Set(const string& msg)
