@@ -1,12 +1,26 @@
+#include <cstdlib>
+#include <iostream>
+
 #include "Server.h"
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
+  char* path = getenv("QC_SW_PATH");
+  if(path==NULL)
+    {
+      cerr << "Enviromental variables aren't set. Source Env.sh first." << endl;
+
+      return -1;
+    }
+
+  string fifo_path = path;
+  fifo_path += "/Macro/FIFO";
+
   try
     {
-      Server server("/home/isyoon/Test_HV_Control/Server/FIFO");
+      Server server(fifo_path, "ttyUSB1");
       server.Run();
     }
   catch(const string& error)

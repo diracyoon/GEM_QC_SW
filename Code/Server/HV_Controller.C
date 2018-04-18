@@ -19,10 +19,21 @@ HV_Controller::~HV_Controller()
 CAENHVRESULT HV_Controller::Get(const unsigned short& channel, const string& parameter, float& value)
 {
   unsigned short ch_list[1] = {channel};
-  float value_list[1];
 
-  CAENHVRESULT result = CAENHV_GetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
-
+  CAENHVRESULT result;
+  if(parameter.compare("Pw")==0)
+    {
+      bool value_list[1];
+      result = CAENHV_GetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+      value = value_list[0];
+    }
+  else
+    {
+      float value_list[1];
+      result = CAENHV_GetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+      value = value_list[0];
+    }
+   
   return result;
 }//CAENHVRESULT HV_Controller::Get(const int& channel, const string& parameter, const float& value)
 

@@ -21,7 +21,7 @@ class HV_Contoller;
 class Server
 {
  public:
-  Server(const string& a_path_fifo);
+  Server(const string& a_path_fifo, const string& a_port);
   ~Server();
 
   void Run();

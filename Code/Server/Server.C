@@ -2,7 +2,7 @@
 
 //////////
 
-Server::Server(const string& a_path_fifo) : hv_controller("ttyUSB1"), path_fifo_server(a_path_fifo)
+Server::Server(const string& a_path_fifo, const string& a_port) : hv_controller(a_port), path_fifo_server(a_path_fifo)
 {
   Initialization();
 }//Server::Server()
@@ -37,7 +37,7 @@ void Server::Run()
       //request HV get
       if(msg.find("##GET##")!=string::npos) HV_Control_Get(msg);
 
-      this_thread::sleep_for(chrono::milliseconds(100));
+      this_thread::sleep_for(chrono::milliseconds(10));
     }
 
   return;
@@ -77,7 +77,7 @@ void Server::HV_Control_Get(const string& msg)
   float value;
 
   CAENHVRESULT result = hv_controller.Get(channel, parameter, value);
-
+  
   if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK## " + to_string(value));
   else Transmit_To_Client(channel, "##BAD##");
 
