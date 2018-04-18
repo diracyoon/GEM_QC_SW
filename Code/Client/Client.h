@@ -49,6 +49,8 @@ class Client
 
   string path_result;
   ofstream result_out;
+
+  int n_trip;
   
   void Connect_To_Server();
   void Disconnect_From_Server();
@@ -56,7 +58,7 @@ class Client
   void Initialization_QC();
   string Receive_From_Server();
   void Read_Config_Data();
-  void Recover_Trip(const float& vset);
+  float Recover_Trip(const float& vset);
   void Result_Log_Maker();
   float Request_HV_Control_Get(const string& parameter);
   void Request_HV_Control_Set(const string& parameter, const float& value);
@@ -64,5 +66,6 @@ class Client
   void Transmit_To_Server(const string& msg);
   void QC_Long();
   void QC_Long_Body();
+  void QC_Long_Finalization();
   void QC_Long_Initialization();
 };

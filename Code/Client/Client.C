@@ -144,18 +144,20 @@ void Client::Read_Config_Data()
 
 //////////
 
-void Client::Recover_Trip(const float& vset)
+float Client::Recover_Trip(const float& vset)
 {
-  static int n_trip;
+  system_clock::time_point time_start = system_clock::now();
+  
   n_trip++;
 
   cout << "class Client: Trip!! # of trip = " << n_trip << " Start recovery process." << endl;
 
+  ///trip recover
   Request_HV_Control_Set("Pw", 0);
   Request_HV_Control_Set("Pw", 1);
   Request_HV_Control_Set("VSet", vset);
-  
 
+  //voltage recover
   float vmon_old = -1;
   while(1)
     {
@@ -173,10 +175,14 @@ void Client::Recover_Trip(const float& vset)
       vmon_old = vmon;
       
       this_thread::sleep_for(chrono::seconds(1));
-    }
+    }  
+
+  system_clock::time_point time_end = system_clock::now();
+
+  duration<float> duration = time_end - time_start;
+  float process_duration = duration.count();
   
-  
-  return;
+  return process_duration;
 }//void Client::Recover_Trip()
 
 //////////
@@ -277,18 +283,9 @@ void Client::Transmit_To_Server(const string& msg)
 void Client::QC_Long()
 {
   QC_Long_Initialization();
-
   QC_Long_Body();
-  
-  //QC Long finalization - turn off
-  Request_HV_Control_Set("Pw", 0);
-
-  result_out << "##############################" << endl;
-  time_t time = system_clock::to_time_t(system_clock::now());
-  result_out << "End time: " << ctime(&time);
-
-  cout << "QC Long done." << endl;
-  
+  QC_Long_Finalization();
+    
   return;
 }//void Client::QC_Long()
 
@@ -303,17 +300,21 @@ void Client::QC_Long_Body()
   cout << "Start QC2 Long test!!" << endl;
 
   float vset_old = -999;
+  float trip_duration = 0;
   
   system_clock::time_point time_start = system_clock::now();
-
+  
   while(1)
     {
       //run time
       system_clock::time_point time_current = system_clock::now();
 
-      duration<float> time_run = time_current - time_start;
+      duration<float> duration = time_current - time_start;
       
-      float vset = Scan_Config(time_run.count());
+      float process_duration = duration.count();
+      float run_duration = process_duration - trip_duration;
+   
+      float vset = Scan_Config(run_duration);
       
       //end of QC
       if(vset<0) break;
@@ -323,20 +324,36 @@ void Client::QC_Long_Body()
 	  vset_old = vset;
 	}
       
-      if(Request_HV_Control_Get("Pw")==false) Recover_Trip(vset);
+      if(Request_HV_Control_Get("Pw")==false) trip_duration += Recover_Trip(vset);
             
       float vmon = Request_HV_Control_Get("VMon");
       float imon = Request_HV_Control_Get("IMonH");
 
-      result_out << time_run.count() << " " << vset << " " << vmon << " " << imon << endl; 
+      result_out << run_duration << " " << vset << " " << vmon << " " << imon << endl; 
 
-      if(int(time_run.count())%10==0) cout << "Run duration = " << time_run.count() << "s, V_set = " << vset << "V, V_Mon = " << vmon << "V, I_Mon = " << imon << "uA" << endl; 
+      if((int)run_duration%10==0) cout << "Run duration = " << run_duration << "s, V_set = " << vset << "V, V_Mon = " << vmon << "V, I_Mon = " << imon << "uA" << endl; 
       
       this_thread::sleep_for(chrono::seconds(1));
     }  
   
   return;
 }//void Client::QC_Long_Body()
+
+//////////
+
+void Client::QC_Long_Finalization()
+{
+  Request_HV_Control_Set("Pw", 0);
+
+  result_out << "##############################" << endl;
+  result_out << "# of trip = " << n_trip << endl;
+  time_t time = system_clock::to_time_t(system_clock::now());
+  result_out << "End time: " << ctime(&time);
+
+  cout << "QC Long done." << endl;
+  
+  return;
+}//void Client::QC_Long_Finalization()
 
 //////////
 
@@ -353,7 +370,9 @@ void Client::QC_Long_Initialization()
   Request_HV_Control_Set("ISet", 1);
   Request_HV_Control_Set("Trip", 0.1);
   Request_HV_Control_Set("PDwn", 0);
-    
+
+  n_trip = 0;
+  
   return;
 }//void Client::QC_Long_Initialization()
 
