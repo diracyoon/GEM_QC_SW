@@ -7,6 +7,13 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+  if(argc!=2)
+    {
+      cerr << "Wrong number of argc." << endl;
+      cout << "argv[1]: port i.e. ttyUSB0." << endl;
+      exit(1);
+    }
+  
   char* path = getenv("QC_SW_PATH");
   if(path==NULL)
     {
@@ -18,9 +25,11 @@ int main(int argc, char* argv[])
   string fifo_path = path;
   fifo_path += "/Macro/FIFO";
 
+  string port = argv[1];
+  
   try
     {
-      Server server(fifo_path, "ttyUSB1");
+      Server server(fifo_path, port);
       server.Run();
     }
   catch(const string& error)
