@@ -61,13 +61,13 @@ then
 else
     echo "Checked the channel ${channel} is free. Let's proceed."
 fi
-    
+echo
+
 ##set runnumber##
 dir_output=${QC_SW_PATH}/Output/QC_Long
 file_count=`ls $dir_output | grep result | wc -l`
 runnumber=`expr $file_count + 1`
 
-echo 
 echo "Assigned runnumber = "${runnumber}
 echo
 

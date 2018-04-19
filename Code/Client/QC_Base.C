@@ -30,6 +30,21 @@ void QC_Base::Finalization()
 
 //////////
 
+float QC_Base::Get_VSet(const float& time_run)
+{
+  float time_sum = 0;
+  for(int i=0; i<vec_config_data.size(); i++)
+    {
+      time_sum += vec_config_data[i].time;
+
+      if(time_run<time_sum) return vec_config_data[i].vset;
+    }
+  
+  return -1;
+}//float QC_Base::Get_VSet(const float& time_run)
+
+//////////
+
 void QC_Base::Initialization(const string& type)
 {
   Result_Log_Maker(type);
@@ -168,14 +183,3 @@ void QC_Base::Result_Log_Maker(const string& type)
 
 //////////
 
-float QC_Base::Scan_Config(const float& time_run)
-{
-  for(int i=0; i<vec_config_data.size(); i++)
-    {
-      if(vec_config_data[i].time<time_run && time_run<vec_config_data[i+1].time) return vec_config_data[i].vset;
-    }
-
-  return -1;
-}//float QC_Base::Scan_Config(const float& time_run)
-
-//////////

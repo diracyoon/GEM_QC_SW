@@ -42,13 +42,13 @@ class QC_Base
     vector<Config_Data> vec_config_data;
 
     void Finalization();
+    float Get_VSet(const float& time_run);
     void Initialization(const string& type);
     void Initialization_HV();
     void Read_Config_Data(const string& config_file);
     float Recover_Trip(const float& vset);
     virtual void Body() = 0;
     void Result_Log_Maker(const string& type);
-    float Scan_Config(const float& time_run);
 };
 
 #endif /* __QC_Base_h__ */

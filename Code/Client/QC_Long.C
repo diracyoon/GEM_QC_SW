@@ -45,7 +45,7 @@ void QC_Long::Body()
       float process_duration = duration.count();
       float run_duration = process_duration - trip_duration;
 
-      float vset = Scan_Config(run_duration);
+      float vset = Get_VSet(run_duration);
 
       //end of QC
       if(vset<0) break;
