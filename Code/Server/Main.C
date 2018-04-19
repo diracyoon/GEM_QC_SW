@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
   try
     {
-      Server server(fifo_path, "ttyUSB2");
+      Server server(fifo_path, "ttyUSB1");
       server.Run();
     }
   catch(const string& error)
