@@ -14,8 +14,8 @@ fi
 echo
 
 #interactive input argument
-echo -n "Please input foil name: "
-read foilname
+echo -n "Please input foil id: "
+read foilid
 
 echo -n "Please input channel number: "
 read channel
@@ -31,8 +31,8 @@ read tester
 
 echo
 echo "Check input variable."
-echo -n "Foilname = "
-echo -n $foilname
+echo -n "Foilid = "
+echo -n $foilid
 echo -n ", channel number = "
 echo -n $channel
 echo -n ", relative humidity = "
@@ -72,4 +72,4 @@ echo "Assigned runnumber = "${runnumber}
 echo
 
 rm -f ${QC_SW_PATH}/Macro/FIFO${channel}
-${QC_SW_PATH}/Code/Client/Client $runnumber $foilname $channel $rh $temp $tester
+${QC_SW_PATH}/Code/Client/Client $runnumber $foilid $channel $rh $temp $tester
