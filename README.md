@@ -49,6 +49,7 @@ cd Macro
 source Env.sh
 ./Run_Client.sh
 </pre>
+You can run the client as many as HV module channel. Every client with different channel number runs independently.
 If the server is not running or owned HV channel by other channel process, Run_Client.sh scrip will notice it and kill itself. Anyway you should keep focus not to make any mistake.
 ### Output
 Measured I-V curve will show up Output/QC_Long directory.
