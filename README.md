@@ -10,7 +10,7 @@ CAEN CAENHVWrapper library is necessary. To download it, please refer http://www
 sudo ./install.sh
 </pre>
 
-## Install
+## Compile HV control codes
 <pre>
 git clone git@github.com:diracyoon/GEM_QC_SW
 cd GEM_QC_SW/Code/Server
@@ -19,3 +19,8 @@ cd ../Client
 make
 </pre>
 Excutables shoud appear.
+
+## Usage
+You shoud get su right first because CAEN wrapper library needs it. Then the environmental variables shuld be set.
+<pre>
+</pre>
