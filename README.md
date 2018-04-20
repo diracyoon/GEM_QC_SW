@@ -36,6 +36,5 @@ sudo -s
 cd Macro
 source Env.sh
 ./Run_Client.sh
-input foil id, channel number  
 </pev>
 If the server is not running or owned HV channel by other channel process, Run_Client.sh scrip will notice and kill itself.
