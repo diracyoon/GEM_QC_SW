@@ -10,4 +10,12 @@ CAEN CAENHVWrapper library is necessary. To download it, please refer http://www
 sudo ./install.sh
 </pre>
 
-## Install 
+## Install
+<pre>
+git clone git@github.com:diracyoon/GEM_QC_SW
+cd GEM_QC_SW/Code/Server
+make
+cd ../Client
+make
+</pre>
+Excutables shoud appear.
