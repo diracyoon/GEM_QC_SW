@@ -20,6 +20,8 @@ make
 </pre>
 Excutables shoud appear.
 
+##
+
 ## Usage
 # Running server
 You shoud get su right first because CAEN wrapper library needs it. Then the environmental variables shuld be set. Now you are OK to run server. If the process is failed due to communication to HV module, just try to run one more time.
@@ -36,5 +38,5 @@ sudo -s
 cd Macro
 source Env.sh
 ./Run_Client.sh
-</pev>
+</pre>
 If the server is not running or owned HV channel by other channel process, Run_Client.sh scrip will notice and kill itself.
