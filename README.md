@@ -21,6 +21,9 @@ make
 Excutables shoud appear.
 
 ## Usage
+#
 You shoud get su right first because CAEN wrapper library needs it. Then the environmental variables shuld be set.
 <pre>
+sudo -s
+
 </pre>
