@@ -22,11 +22,15 @@ Excutables shoud appear.
 
 ## Short explaination about the role of each class
 ### class HV_Controller
-Communicate HV module.
+The role of class HV_Controller is communicating HV module.
 ### class Server
+The class Server relays the IO requsts from Client to HV_Controller and vice versa. 
 ### class Client
+The class Client communicates HV module via class Server as class QC_Base requests. 
 ### QC_Base
+The class QC_Base do most of things for QC such as controlling class Client, making result log and ETC.    
 ### QC_Long
+Daughter class of QC_Base. QC Long specific functions are defined in here.
 
 ## Usage
 ### Running server
@@ -49,7 +53,7 @@ If the server is not running or owned HV channel by other channel process, Run_C
 ### Output
 Measured I-V curve will show up Output/QC_Long directory.
 <pre>
-File name of output file: <runnumber>_<foil id>.result
+File name of output file: (runnumber)_(foil id).result
 structure of output file:
 Overall information about the QC test.
 ##############################
