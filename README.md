@@ -20,7 +20,13 @@ make
 </pre>
 Excutables shoud appear.
 
-##
+## Short explaination about the role of each class
+### class HV_Controller
+Communicate HV module.
+### class Server
+### class Client
+### QC_Base
+### QC_Long
 
 ## Usage
 ### Running server
