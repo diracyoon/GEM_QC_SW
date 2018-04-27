@@ -32,8 +32,9 @@ class QC_Base
     string tester;
     string path;
     
-    int n_trip;
-
+    int n_trip_total;
+    int n_trip_stage;
+    
     string path_result;
     ofstream result_out;
       
