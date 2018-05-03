@@ -26,7 +26,7 @@ void Preparation_QC_Long::Run()
 //////////
 
 void Preparation_QC_Long::Body()
-{
+{  
   cout << "Start Preparation QC_Long test!!" << endl;
 
   system_clock::time_point process_start = system_clock::now();
@@ -36,34 +36,43 @@ void Preparation_QC_Long::Body()
   for(int i=0; i<vec_config_data.size(); i++)
     {
       system_clock::time_point stage_start = system_clock::now();
-
+      
       float vset = Get_VSet(i);
       client.Request_HV_Control_Set("VSet", vset);
       
       float trip_duration = 0;
       n_trip_stage = 0;
-
+      
       while(1)
 	{
 	  //trip check
 	  if(client.Request_HV_Control_Get("Pw")==false)
 	    {
-	      n_trip_total++;
-	      n_trip_stage++;
-
-	      cout << "class Preparation_QC_Log, Ch# = " << channel << ": Trip!! # of trip in the stage= " << n_trip_stage << ", # of trip in whole run = " << n_trip_total << endl;
-
-	      //pull back
-	      if(3<n_trip_stage)
+	      float recovery_duration;
+	      bool pull_back = Recover_Trip(vset, process_start, recovery_duration, true);
+	      
+	      if(pull_back==true)
 		{
-		  cout << "class Preparation_QC_Log, Ch# = " << channel << ": Too many trip. Pull back." << endl;
-		  i =- 2;
-		 		  
+		  cout << "class Preparation_QC_Log, Ch# = " << channel << ": Too many trips. Pull back." << endl;
+
+		  n_trial[i]++;
+		  
+		  if(3<n_trial[i])
+		    {
+		      //turn off HV for safety
+		      client.Request_HV_Control_Set("Pw", 0);
+
+		      cout << "class Preparation_QC_Log, Ch# = " << channel << ": Too many trials at this stage V_Set = " << vset << ". Abort QC." << endl;
+		      throw "Too many trials";
+		    }
+		  
+		  //pull back. It's a bit risky trick but quick
+		  i = i - 2;
+		  if(i<0) i = 0;
+		  
 		  break;
 		}
 	      
-	      Recover_Trip(vset, process_start);
-
 	      //reset stage start time
 	      stage_start = system_clock::now();
 	    }
@@ -74,9 +83,7 @@ void Preparation_QC_Long::Body()
 	  //current stability check
 	  for(int j=0; j<4; j++) i_history[j] = i_history[j+1];
 	  i_history[4] = imon;
-
-	  
-	  
+	  	  
 	  //run time
 	  system_clock::time_point time_current = system_clock::now();
 	  
@@ -88,7 +95,8 @@ void Preparation_QC_Long::Body()
 	  
 	  result_out << process_duration_f << " " << vset << " " << vmon << " " << imon << endl;
 
-	  if((int)process_duration_f%10==0) cout << "Process duration = " << process_duration_f << "s, stability duration = " << stability_duration_f << "s, V_set = " << vset << "V, V_Mon = " << vmon << "V, I_Mon = " << imon << "uA" << endl;
+	  cout << fixed;
+	  if((int)process_duration_f%10==0) cout << "Process duration = " << setprecision(2) << process_duration_f << "s, stability duration = " << setprecision(2) << stability_duration_f << "s, V_set = " << setprecision(2) << vset << "V, V_Mon = " << setprecision(2) << vmon << "V, I_Mon = " << setprecision(2) << imon << "uA" << endl;
 
 	  //end of stage
 	  if(vec_config_data[i].time<stability_duration_f) break;

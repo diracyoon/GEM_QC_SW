@@ -58,9 +58,17 @@ then
     pid=`ps -au | grep  ${QC_SW_PATH}/Bin/Preparation_QC_Long | grep -v grep | awk '{if ($14 == '"$channel"') print $2}'`
     echo "Error!! The channel is owned by the process PID $pid!!"
     exit
-else
-    echo "Checked the channel ${channel} is free. Let's proceed."
 fi
+
+chk_channel=`ps -au | grep  ${QC_SW_PATH}/Bin/QC_Long | grep -v grep | awk '{print $14}' | grep $channel | wc -l`
+if [ $chk_channel -eq 1 ];
+then
+    pid=`ps -au | grep  ${QC_SW_PATH}/Bin/QC_Long | grep -v grep | awk '{if ($14 == '"$channel"') print $2}'`
+    echo "Error!! The channel is owned by the process PID $pid!!"
+    exit
+fi
+
+echo "Checked the channel ${channel} is free. Let's proceed."
 echo
 
 ##set runnumber##

@@ -10,6 +10,7 @@ QC_Base::QC_Base(const int& a_runnumber, const string& a_foil_name, const int& a
 
 QC_Base::~QC_Base()
 {
+  delete[] n_trial;
 }//QC_Base::~QC_Base()
 
 //////////
@@ -59,7 +60,7 @@ void QC_Base::Initialization_HV()
   client.Request_HV_Control_Set("RDwn", 50);
 
   client.Request_HV_Control_Set("ISet", 1);
-  client.Request_HV_Control_Set("Trip", 0.1);
+  client.Request_HV_Control_Set("Trip", 0.0);
   client.Request_HV_Control_Set("PDwn", 0);
 
   n_trip_total = 0;
@@ -70,25 +71,31 @@ void QC_Base::Initialization_HV()
 
 //////////
 
-float QC_Base::Recover_Trip(const float& vset, system_clock::time_point process_start)
+bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& process_start, float& recovery_duration, const bool& mode_pull_back)
 {
   system_clock::time_point time_start = system_clock::now();
+
+  n_trip_total++;
+  n_trip_stage++;
   
+  cout << "class QC_Base, Ch# = " << channel << ": Trip!! number of trip in the stage = " << n_trip_stage << ", number of trip in whole run = " << n_trip_total << endl;
   cout << "class QC_Base: Start recovery process." << endl;
   
   ///trip recover
   client.Request_HV_Control_Set("Pw", 0);
   client.Request_HV_Control_Set("Pw", 1);
-  client.Request_HV_Control_Set("VSet", vset);
 
-  this_thread::sleep_for(chrono::seconds(1));
+  //pull back
+  if(mode_pull_back==true && 3<n_trip_stage) return true;
+  
+  client.Request_HV_Control_Set("VSet", vset);
   
   //voltage recover
   float vmon_old = -1;
   while(1)
     {
       //trip check
-      if(client.Request_HV_Control_Get("Pw")==false) Recover_Trip(vset, process_start);
+      if(client.Request_HV_Control_Get("Pw")==false) return Recover_Trip(vset, process_start, recovery_duration, mode_pull_back);
       
       //run time
       system_clock::time_point time_current = system_clock::now();
@@ -99,12 +106,12 @@ float QC_Base::Recover_Trip(const float& vset, system_clock::time_point process_
       float vmon = client.Request_HV_Control_Get("VMon");
       float imon = client.Request_HV_Control_Get("IMonH");
 
-      result_out << process_duration_f << " " << " " << vset << " " << vmon << " " << imon << endl;
+      result_out << process_duration_f << " " << vset << " " << vmon << " " << imon << endl;
       
       cout << "Recovering trip. VSet: " << vset << ", VMon = " << vmon << endl;
       
       //voltage stabilization condition
-      if(fabs(vmon-vset)/vset<0.05 && (vmon-vmon_old)<0.5)
+      if(fabs(vmon-vset)/vset<0.1 && (vmon-vmon_old)<0.5)
 	{
 	  cout << "Recovery process done." << endl;
 	  break;
@@ -118,9 +125,10 @@ float QC_Base::Recover_Trip(const float& vset, system_clock::time_point process_
   system_clock::time_point time_end = system_clock::now();
   
   duration<float> duration = time_end - time_start;
-  float process_duration = duration.count();
-  
-  return process_duration;
+  recovery_duration = duration.count();
+
+  //no pull back
+  return false;
 }//float QC_Base::Recover_Trip(const float& vset)
   
 //////////
@@ -156,6 +164,9 @@ void QC_Base::Read_Config_Data(const string& config_file)
     }
   result_out << "##############################" << endl;
 
+  n_trial = new int[vec_config_data.size()];
+  for(int i=0; i<vec_config_data.size(); i++) n_trial[i] = 0;
+  
   return;
 }//void Client::Read_Config_Data()
 

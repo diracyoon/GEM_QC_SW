@@ -54,7 +54,13 @@ void QC_Long::Body()
 	  float stage_net_duration_f = stage_duration_f - trip_duration;
 
 	  //trip check
-	  if(client.Request_HV_Control_Get("Pw")==false) trip_duration += Recover_Trip(vset, process_start);
+	  if(client.Request_HV_Control_Get("Pw")==false)
+	    {
+	      float recovery_duration;
+	      Recover_Trip(vset, process_start, recovery_duration);
+
+	      trip_duration += recovery_duration;
+	    }
 	  
 	  float vmon = client.Request_HV_Control_Get("VMon");
 	  float imon = client.Request_HV_Control_Get("IMonH");

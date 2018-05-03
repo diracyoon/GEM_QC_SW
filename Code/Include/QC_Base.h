@@ -35,6 +35,7 @@ class QC_Base
     
     int n_trip_total;
     int n_trip_stage;
+    int* n_trial;
     
     string path_result;
     ofstream result_out;
@@ -47,7 +48,7 @@ class QC_Base
     float Get_VSet(const int& index);
     void Initialization(const string& type);
     void Initialization_HV();
-    float Recover_Trip(const float& vset, system_clock::time_point process_start);
+    bool Recover_Trip(const float& vset, const system_clock::time_point& process_start, float& recovery_duration, const bool& mode_pull_back=false);
     void Read_Config_Data(const string& config_file);
     void Result_Log_Maker(const string& type);
 
