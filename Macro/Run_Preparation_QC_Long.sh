@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #check server is running or not
-jobname_server=${QC_SW_PATH}/Code/Server/Server
+jobname_server=${QC_SW_PATH}/Bin/Server
 chk_server=`ps -au | grep $jobname_server | grep -v grep | wc -l`
 
 if [ $chk_server -eq 1 ];
@@ -52,10 +52,10 @@ fi
 echo
 
 #check channel is owned by other client
-chk_channel=`ps -au | grep  ${QC_SW_PATH}/Code/Client/Client | grep -v grep | awk '{print $14}' | grep $channel | wc -l`
+chk_channel=`ps -au | grep  ${QC_SW_PATH}/Bin/Preparation_QC_Long | grep -v grep | awk '{print $14}' | grep $channel | wc -l`
 if [ $chk_channel -eq 1 ];
 then
-    pid=`ps -au | grep  ${QC_SW_PATH}/Code/Client/Client | grep -v grep | awk '{if ($14 == '"$channel"') print $2}'`
+    pid=`ps -au | grep  ${QC_SW_PATH}/Bin/Preparation_QC_Long | grep -v grep | awk '{if ($14 == '"$channel"') print $2}'`
     echo "Error!! The channel is owned by the process PID $pid!!"
     exit
 else
@@ -64,7 +64,7 @@ fi
 echo
 
 ##set runnumber##
-dir_output=${QC_SW_PATH}/Output/QC_Long
+dir_output=${QC_SW_PATH}/Output/Preparation_QC_Long
 file_count=`ls $dir_output | grep result | wc -l`
 runnumber=`expr $file_count + 1`
 
@@ -72,4 +72,4 @@ echo "Assigned runnumber = "${runnumber}
 echo
 
 rm -f ${QC_SW_PATH}/Macro/FIFO${channel}
-${QC_SW_PATH}/Code/Client/Client $runnumber $foilid $channel $rh $temp $tester
+${QC_SW_PATH}/Bin/Preparation_QC_Long $runnumber $foilid $channel $rh $temp $tester
