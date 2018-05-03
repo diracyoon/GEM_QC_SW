@@ -30,8 +30,6 @@ void Preparation_QC_Long::Body()
   cout << "Start Preparation QC_Long test!!" << endl;
 
   system_clock::time_point process_start = system_clock::now();
-
-  float i_history[5] = {0};
   
   for(int i=0; i<vec_config_data.size(); i++)
     {
@@ -42,6 +40,9 @@ void Preparation_QC_Long::Body()
       
       float trip_duration = 0;
       n_trip_stage = 0;
+
+      float imon_old = 0;
+      float imon = 0;
       
       while(1)
 	{
@@ -76,13 +77,14 @@ void Preparation_QC_Long::Body()
 	      //reset stage start time
 	      stage_start = system_clock::now();
 	    }
+
+	  imon_old = imon;
 	  
 	  float vmon = client.Request_HV_Control_Get("VMon");
-	  float imon = client.Request_HV_Control_Get("IMonH");
+	  imon = client.Request_HV_Control_Get("IMonH");
 
-	  //current stability check
-	  for(int j=0; j<4; j++) i_history[j] = i_history[j+1];
-	  i_history[4] = imon;
+	  //current stability check. if current is not stable within 10%, reset stage start time  
+	  if(0.1<fabs(imon_old-imon)/imon) stage_start = system_clock::now();
 	  	  
 	  //run time
 	  system_clock::time_point time_current = system_clock::now();
