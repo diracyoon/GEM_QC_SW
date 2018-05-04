@@ -4,8 +4,11 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <bitset>
 
 #include "Client.h"
+
+#define IMON "IMonH"
 
 using namespace std;
 using namespace chrono;
@@ -44,6 +47,8 @@ class QC_Base
 
     vector<Config_Data> vec_config_data;
 
+    bool Check_Stability();
+    bool Check_Trip();
     void Finalization(const string& HV_status="OFF");
     float Get_VSet(const int& index);
     void Initialization(const string& type);
@@ -51,7 +56,7 @@ class QC_Base
     bool Recover_Trip(const float& vset, const system_clock::time_point& process_start, float& recovery_duration, const bool& mode_pull_back=false);
     void Read_Config_Data(const string& config_file);
     void Result_Log_Maker(const string& type);
-
+    
     virtual void Body() = 0;
 };
 

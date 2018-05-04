@@ -49,6 +49,18 @@ CAENHVRESULT HV_Controller::Set(const unsigned short& channel, const string& par
   return result;
 }//CAENHVRESULT HV_Controller::Set(const int& channel, const string& parameter, const float& value)
 
+CAENHVRESULT HV_Controller::Status(const unsigned short& channel, int& value)
+{
+  unsigned short ch_list[1] = {channel};
+
+  unsigned int value_list[1];
+  CAENHVRESULT result = CAENHV_GetChParam(handle, 0, "ChStatus", 1, ch_list, value_list);
+
+  value = value_list[0];
+
+  return result;
+}//CAENHVRESULT HV_Controller::Status(const unsigned short& channel, int& value)
+
 //////////
 
 void HV_Controller::Create_HV_Map()

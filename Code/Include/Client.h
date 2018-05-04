@@ -22,6 +22,7 @@ class Client
 
   float Request_HV_Control_Get(const string& parameter);
   void Request_HV_Control_Set(const string& parameter, const float& value);
+  int Request_HV_Control_Status();
   
  protected:
   int runnumber;

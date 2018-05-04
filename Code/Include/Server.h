@@ -41,6 +41,7 @@ class Server
   void Erase_Client(const string& msg);
   void HV_Control_Get(const string& msg);
   void HV_Control_Set(const string& msg);
+  void HV_Control_Status(const string& msg);
   void Initialization();
   string Receive_From_Client();
   void Register_Client(const string& msg);

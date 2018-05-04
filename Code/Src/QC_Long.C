@@ -35,14 +35,37 @@ void QC_Long::Body()
   for(int i=0; i<vec_config_data.size(); i++)
     {
       system_clock::time_point stage_start = system_clock::now();
-      
-      float vset = Get_VSet(i);
 
+      float vset = Get_VSet(i);
+      client.Request_HV_Control_Set("VSet", vset);
+      
       float trip_duration = 0;
       n_trip_stage = 0;
       
       while(1)
 	{
+	  //trip check
+	  if(Check_Trip()==true)
+	    {
+	      float recovery_duration;
+	      bool turn_off = Recover_Trip(vset, process_start, recovery_duration, true);
+
+	      //if trip ocurrs more than three times, abort QC
+	      if(turn_off==true)
+		{
+		  //turn off HV for safety
+		  client.Request_HV_Control_Set("Pw", 0);
+
+		  cout << "class QC_Log, Ch# = " << channel << ": Too many trips at this stage V_Set = " << vset << ". Abort QC." << endl;
+		  throw "Too many trip";
+		}
+	      
+	      trip_duration += recovery_duration;
+	    }
+	  
+	  float vmon = client.Request_HV_Control_Get("VMon");
+	  float imon = client.Request_HV_Control_Get(IMON);
+	  
 	  //run time
 	  system_clock::time_point time_current = system_clock::now();
 	  
@@ -52,22 +75,10 @@ void QC_Long::Body()
 	  float process_duration_f = process_duration.count();
 	  float stage_duration_f = stage_duration.count();
 	  float stage_net_duration_f = stage_duration_f - trip_duration;
-
-	  //trip check
-	  if(client.Request_HV_Control_Get("Pw")==false)
-	    {
-	      float recovery_duration;
-	      Recover_Trip(vset, process_start, recovery_duration);
-
-	      trip_duration += recovery_duration;
-	    }
-	  
-	  float vmon = client.Request_HV_Control_Get("VMon");
-	  float imon = client.Request_HV_Control_Get("IMonH");
-	  
+	  	  
 	  result_out << process_duration_f << " " << " " << vset << " " << vmon << " " << imon << endl;
 	  
-	  if((int)stage_net_duration_f%10==0) cout << "Process duration = " << process_duration_f << "s, stage duration = " << stage_net_duration_f << "s, pV_set = " << vset << "V, V_Mon = " << vmon << "V, I_Mon = " << imon << "uA" << endl;
+	  if((int)process_duration_f%10==0) cout << "Process duration = " << process_duration_f << "s, stage duration = " << stage_net_duration_f << "s, V_set = " << vset << "V, V_Mon = " << vmon << "V, I_Mon = " << imon << "uA" << endl;
 
 	  //end of stage
 	  if(vec_config_data[i].time<stage_net_duration_f) break;

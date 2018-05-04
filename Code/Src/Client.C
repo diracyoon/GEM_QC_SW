@@ -73,6 +73,38 @@ void Client::Request_HV_Control_Set(const string& parameter, const float& value)
 
 //////////
 
+int Client::Request_HV_Control_Status()
+{
+  for(int i=0; i<2; i++)
+    {
+      string transmit = "##STATUS## CH" + to_string(channel);
+      Transmit_To_Server(transmit);
+
+      string result = Receive_From_Server();
+
+      if(result.find("##OK##")!=string::npos)
+	{
+	  istringstream iss(result);
+
+	  string buf;
+	  iss >> buf;
+
+	  int value;
+	  iss >> value;
+
+	  return value;
+	}
+
+      //if the first trial failed, wait 1 second and try one more time.
+      this_thread::sleep_for(chrono::seconds(1));
+    }
+
+  throw "class Client: HV control request failed.";
+  
+}//float Client::Request_HV_Control_Status()
+
+//////////
+
 void Client::Connect_To_Server()
 {
   cout << "Connect to server." << endl;

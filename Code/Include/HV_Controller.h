@@ -13,7 +13,8 @@ class HV_Controller
 
   CAENHVRESULT Get(const unsigned short& channel, const string& parameter, float& value);
   CAENHVRESULT Set(const unsigned short& channel, const string& parameter, const float& value);
-
+  CAENHVRESULT Status(const unsigned short& channel, int& value);
+		      
  protected:
   string port;
 

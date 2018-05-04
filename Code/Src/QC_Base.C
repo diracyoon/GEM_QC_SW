@@ -15,6 +15,30 @@ QC_Base::~QC_Base()
 
 //////////
 
+bool QC_Base::Check_Stability()
+{
+  int status = client.Request_HV_Control_Status();
+
+  bool ramping_up = status & 0x2;
+  bool ramping_down = status & 0x4;
+
+  if(ramping_up||ramping_down) return false;
+  else return true;
+}//bool QC_Base::Check_Stability()
+
+//////////
+
+bool QC_Base::Check_Trip()
+{
+  int status = client.Request_HV_Control_Status();
+  
+  bool trip = status & 0x80;
+  
+  return trip;
+}//bool QC_Base::Check_Trip()
+
+//////////
+
 void QC_Base::Finalization(const string& HV_status)
 {
   if(HV_status.find("OFF")!=string::npos) client.Request_HV_Control_Set("Pw", 0);
@@ -89,13 +113,21 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   if(mode_pull_back==true && 3<n_trip_stage) return true;
   
   client.Request_HV_Control_Set("VSet", vset);
+
+  this_thread::sleep_for(chrono::seconds(3));
   
   //voltage recover
-  float vmon_old = -1;
   while(1)
     {
       //trip check
-      if(client.Request_HV_Control_Get("Pw")==false) return Recover_Trip(vset, process_start, recovery_duration, mode_pull_back);
+      if(Check_Trip()==true) return Recover_Trip(vset, process_start, recovery_duration, mode_pull_back);
+
+      //voltage stabilization condition
+      if(Check_Stability()==true)
+	{
+	  cout << "Recovery process done." << endl;
+	  break;
+	}
       
       //run time
       system_clock::time_point time_current = system_clock::now();
@@ -109,16 +141,7 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
       result_out << process_duration_f << " " << vset << " " << vmon << " " << imon << endl;
       
       cout << "Recovering trip. VSet: " << vset << ", VMon = " << vmon << endl;
-      
-      //voltage stabilization condition
-      if(fabs(vmon-vset)/vset<0.1 && (vmon-vmon_old)<0.5)
-	{
-	  cout << "Recovery process done." << endl;
-	  break;
-	}
-      
-      vmon_old = vmon;
-      
+            
       this_thread::sleep_for(chrono::seconds(1));
     }
   
@@ -201,4 +224,3 @@ void QC_Base::Result_Log_Maker(const string& type)
 }
 
 //////////
-

@@ -30,14 +30,17 @@ void Server::Run()
 
       //end connection
       if(msg.find("##END##")!=string::npos) Erase_Client(msg);
- 	
+
+      //request HV get 
+      if(msg.find("##GET##")!=string::npos) HV_Control_Get(msg);
+      
       //request HV set
       if(msg.find("##SET##")!=string::npos) HV_Control_Set(msg);
-      
-      //request HV get
-      if(msg.find("##GET##")!=string::npos) HV_Control_Get(msg);
 
-      this_thread::sleep_for(chrono::milliseconds(10));
+      //request HV get status
+      if(msg.find("##STATUS##")!=string::npos) HV_Control_Status(msg);
+            
+      //this_thread::sleep_for(chrono::milliseconds(10));
     }
 
   return;
@@ -111,6 +114,27 @@ void Server::HV_Control_Set(const string& msg)
   return;
 }//void Server::HV_Control_Set(const string& msg)
 
+//////////
+
+void Server::HV_Control_Status(const string& msg)
+{
+  istringstream iss(msg);
+
+  string buf;
+  iss >> buf;
+  iss >> buf;
+
+  int channel;
+  channel = stoi(buf.substr(2, 1), NULL);
+
+  int value;
+  CAENHVRESULT result = hv_controller.Status(channel, value);
+    
+  if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK## " + to_string(value));
+  else Transmit_To_Client(channel, "##BAD##");
+  
+  return;
+}//void Server::HV_Control_Status(const string& msg)
 
 //////////
 

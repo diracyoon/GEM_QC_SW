@@ -47,7 +47,7 @@ void Preparation_QC_Long::Body()
       while(1)
 	{
 	  //trip check
-	  if(client.Request_HV_Control_Get("Pw")==false)
+	  if(Check_Trip()==true)
 	    {
 	      float recovery_duration;
 	      bool pull_back = Recover_Trip(vset, process_start, recovery_duration, true);
@@ -55,14 +55,14 @@ void Preparation_QC_Long::Body()
 	      if(pull_back==true)
 		{
 		  cout << "class Preparation_QC_Log, Ch# = " << channel << ": Too many trips. Pull back." << endl;
-
+		  
 		  n_trial[i]++;
 		  
 		  if(3<n_trial[i])
 		    {
 		      //turn off HV for safety
 		      client.Request_HV_Control_Set("Pw", 0);
-
+		      
 		      cout << "class Preparation_QC_Log, Ch# = " << channel << ": Too many trials at this stage V_Set = " << vset << ". Abort QC." << endl;
 		      throw "Too many trials";
 		    }
@@ -73,18 +73,17 @@ void Preparation_QC_Long::Body()
 		  
 		  break;
 		}
-	      
 	      //reset stage start time
 	      stage_start = system_clock::now();
 	    }
-
+	  
 	  imon_old = imon;
 	  
 	  float vmon = client.Request_HV_Control_Get("VMon");
-	  imon = client.Request_HV_Control_Get("IMonH");
+	  imon = client.Request_HV_Control_Get(IMON);
 
-	  //current stability check. if current is not stable within 10%, reset stage start time  
-	  if(0.1<fabs(imon_old-imon)/imon) stage_start = system_clock::now();
+	  //current stability check. if current is not stable within 20%, reset stage start time  
+	  if(0.2<fabs(imon_old-imon)/imon) stage_start = system_clock::now();
 	  	  
 	  //run time
 	  system_clock::time_point time_current = system_clock::now();
