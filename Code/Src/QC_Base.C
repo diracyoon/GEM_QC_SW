@@ -211,9 +211,9 @@ void QC_Base::Result_Log_Maker(const string& type)
 
   result_out << "Runnumber: " << runnumber << endl;
   result_out << "Foil name: " << foil_name << endl;
-  result_out << "Channel: " << runnumber << endl;
-  result_out << "Relative humidity: " << rh << "%" << endl;
-  result_out << "Temperature: " << temp << "C" << endl;
+  result_out << "Channel: " << channel << endl;
+  result_out << "Relative humidity (%): " << rh  << endl;
+  result_out << "Temperature (c): " << temp << endl;
   result_out << "Tester: " << tester << endl;
 
   time_t time = system_clock::to_time_t(system_clock::now());

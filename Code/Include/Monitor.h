@@ -4,9 +4,13 @@
 #include <chrono>
 #include <thread>
 
+#include <TSystem.h>
 #include <TCanvas.h>
 
 #include "Watcher.h"
+#include "Painter.h"
+
+#define NUM_CHANNEL 4
 
 using namespace std;
 
@@ -21,8 +25,10 @@ class Monitor
  protected:
   Watcher watcher;
   
-  TCanvas canvas;
-  
+  TCanvas* canvas;
+
+  bool chk_ch_occupied[NUM_CHANNEL];
+  Painter* painter[NUM_CHANNEL];
 };
 
 #endif /* __Monitor_h__ */

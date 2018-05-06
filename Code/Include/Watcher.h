@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <vector>
 
 #define MAXLINE 512 
 
@@ -27,7 +28,7 @@ class Watcher
   Watcher();
   ~Watcher();
 
-  int Watch_Process(Watch_Result watch_result[]);
+  void Watch_Process(vector<Watch_Result>& vec_watch_result);
   
  protected:
   string qc_sw_path;

@@ -16,12 +16,11 @@ Watcher::~Watcher()
 
 //////////
 
-int Watcher::Watch_Process(Watch_Result watch_result[])
+void Watcher::Watch_Process(vector<Watch_Result>& vec_watch_result)
 {
   fp = popen("ps -au", "r");
   if(fp==NULL) throw "class Watcher: Can not open popen!";
   
-  int num_occupied_channel = 0;
   char buf[MAXLINE];
   while(fgets(buf, MAXLINE, fp)!=NULL)
     {
@@ -44,28 +43,29 @@ int Watcher::Watch_Process(Watch_Result watch_result[])
       iss >> temp;
       getline(iss, cmd);
       
+      
       if(cmd.find(qc_sw_path+"/Bin/QC_Long")!=string::npos || cmd.find(qc_sw_path+"/Bin/Preparation_QC_Long")!=string::npos)
 	{	  
-	  iss.str(cmd);
+	  Watch_Result watch_result;
 	  
-	  watch_result[num_occupied_channel].pid = pid;
-	  iss >> watch_result[num_occupied_channel].process;
-	  iss >> watch_result[num_occupied_channel].runnumber;
-	  iss >> watch_result[num_occupied_channel].foil_name;
-	  iss >> watch_result[num_occupied_channel].channel;
-	  iss >> watch_result[num_occupied_channel].rh;
-	  iss >> watch_result[num_occupied_channel].temperature;
-	  iss >> watch_result[num_occupied_channel].tester;
+	  watch_result.pid = pid;
 
-	 
-	  
-	  num_occupied_channel++;
+	  iss.str(cmd);
+	  iss >> watch_result.process;
+	  iss >> watch_result.runnumber;
+	  iss >> watch_result.foil_name;
+	  iss >> watch_result.channel;
+	  iss >> watch_result.rh;
+	  iss >> watch_result.temperature;
+	  iss >> watch_result.tester;
+
+	  vec_watch_result.push_back(watch_result);
 	}
     }
 
   pclose(fp);
   
-  return num_occupied_channel;
+  return;
 }//int Watcher::Watch_Process()
 
 //////////
