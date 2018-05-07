@@ -61,7 +61,13 @@ void Monitor::Run()
 		  painter[i] = new Painter(file_path);
 		}
 	      //ongoing measurement
-	      else painter[i]->Update();
+	      else
+		{
+		  painter[i]->Update();
+		  painter[i]->Draw(canvas->cd(i+1));
+
+		  canvas->Update();
+		}
 	    }//channel occupied
 	  else
 	    {
@@ -69,6 +75,8 @@ void Monitor::Run()
 	      if(chk_ch_occupied[i]==true)
 		{
 		  delete painter[i];
+		  
+		  chk_ch_occupied[i] = false;  
 		  
 		  cout << "Channel #" << i << " is released." << endl;
 		}

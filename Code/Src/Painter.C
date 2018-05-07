@@ -76,12 +76,14 @@ Painter::~Painter()
 
   Draw(can_self);
 
-  string print_name = can_name + ".png";
+  string print_name = file_path.substr(0, file_path.find_last_of("/")) + "/" + can_name + ".png";
+  
   can_self->Print(print_name.c_str(), "png");
   
   delete gr_vset;
   delete gr_vmon;
   delete gr_imon;
+  delete can_self;
 }//Painter::~Painter()
 
 //////////
