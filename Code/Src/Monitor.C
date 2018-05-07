@@ -51,6 +51,7 @@ void Monitor::Run()
 	      if(chk_ch_occupied[i]==false)
 		{
 		  cout << "New QC detected. Occupied channel = " << watch_result.channel << ", PID = " << watch_result.pid << ", Process = " << watch_result.process << endl;
+		  this_thread::sleep_for(chrono::seconds(1));
 		  
 		  chk_ch_occupied[i] = true;
 
