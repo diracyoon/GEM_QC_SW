@@ -12,7 +12,7 @@ sudo ./install.sh
 </pre>
 
 ## Download and compile codes
-
+CMake will take care of compling and installing.
 <pre>
 git clone git@github.com:diracyoon/GEM_QC_SW
 cd GEM_QC_SW/Build
@@ -42,6 +42,13 @@ Check QC_Long or Preparation_QC_Long processes are runnunig or not.
 Class for drawing.
 
 ## Usage
+### Running Monitor
+You need to set the environmental variables first.
+<pre>
+cd Macro
+source Env.sh
+./Run_Monitor.sh
+</pre>	
 ### Running server
 You shoud get su right first because CAEN wrapper library needs it. Then the environmental variables shuld be set. Now you are OK to run server. If the process is failed due to communication to HV module, just try to run one more time.
 <pre>
@@ -50,18 +57,17 @@ cd Macro
 source Env.sh
 ./Run_Server.sh
 </pre>
-### Running client
-Prepare other terminal. You need su right again. The environmental variables are needed again. Then you are OK to run client. Run_Client will ask foil id, HV channel number, relative humidity, temperaure and your name. 
+### Running Preparation_QC_Long (QC_Long)
+Prepare other terminal. You need su right again. The environmental variables are needed again. Then you are OK to run Preparation_QC_Long (QC_Long). Run_Preparation_QC_Long.sh (Run_QC_Long.sh) will ask foil id, HV channel number, relative humidity, temperaure and your name, one by one. Type those carefully.
 <pre>
 sudo -s
 cd Macro
 source Env.sh
-./Run_Client.sh
+./Run_Preparation_QC_Long.sh (./Run_QC_Long.sh)
 </pre>
-You can run the client as many as HV module channel. Every client with different channel number runs independently.
-If the server is not running or owned HV channel by other channel process, Run_Client.sh scrip will notice it and kill itself. Anyway you should keep focus not to make any mistake.
+You can run the Preparation_QC_Long (QC_Long) as many as HV module channel. Every client with different channel number runs independently. If the server is not running or owned HV channel by other channel process, Run_Preparation_QC_Long.sh (Run_QC_Long.sh).sh script will notice it and kill itself. Anyway you should keep focus not to make any mistake.
 ### Output
-Measured I-V curve will show up Output/QC_Long directory.
+Measured I-V curve will show up Output/Preparation (QC_Long) directory.
 <pre>
 File name of output file: (runnumber)_(foil id).result
 structure of output file:
