@@ -2,7 +2,8 @@
 
 ## Authors
 Inseok Yoon: inseok.yoon@cern.ch
-Haneol Lee: haneol.lee@cern.ch
+Haneol Lee: haneol.lee@cern.ch for Painter::Draw
+
 
 ## Install CAEN CAENHVWrapper library
 CAEN CAENHVWrapper library is necessary. To download it, please refer http://www.caen.it/csite/CaenProd.jsp?parent=43&idmod=835# Then you need to uncompress tar file, and install the library. To install, go to directory where the library is uncompressed. Then type
@@ -10,15 +11,15 @@ CAEN CAENHVWrapper library is necessary. To download it, please refer http://www
 sudo ./install.sh
 </pre>
 
-## Compile HV control codes
+## Download and compile codes
+
 <pre>
 git clone git@github.com:diracyoon/GEM_QC_SW
-cd GEM_QC_SW/Code/Server
-make
-cd ../Client
-make
+cd GEM_QC_SW/Build
+cmake CMakeLists.txt
+make install
 </pre>
-Excutables shoud appear.
+Excutables shoud appear in Bin directory.
 
 ## Short explaination about the role of each class
 ### class HV_Controller
@@ -29,8 +30,16 @@ The class Server relays the IO requsts from Client to HV_Controller and vice ver
 The class Client communicates HV module via class Server as class QC_Base requests. 
 ### QC_Base
 The class QC_Base do most of things for QC such as controlling class Client, making result log and ETC.    
+### Preparation_QC_Long
+Daughter class of QC_Base. Function for Preparation of QC Long are defined in here.
 ### QC_Long
 Daughter class of QC_Base. QC Long specific functions are defined in here.
+### Monitor
+Class for Monitoring
+### Watcher
+Check QC_Long or Preparation_QC_Long processes are runnunig or not.
+### Painter
+Class for drawing.
 
 ## Usage
 ### Running server
