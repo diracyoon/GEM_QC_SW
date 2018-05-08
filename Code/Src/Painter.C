@@ -61,67 +61,21 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   gr_vset = new TGraphErrors();
   gr_vmon = new TGraphErrors();
   gr_imon = new TGraphErrors();
-
-  gr->Add(gr_vset);
-  gr->Add(gr_vmon);
-  gr->Add(gr_imon);
-
   title = Form("Run : %d, Foil : %s , Channel : %d", runnumber, foil_name.Data(), channel);
-  gr->SetTitle(title);
-  gr->GetXaxis()->SetTitle("Time (s)");
-  gr->GetYaxis()->SetTitle("Voltage (V)");
-  gr->GetXaxis()->SetTitleSize(0.04);
-  gr->GetXaxis()->SetLabelSize(0.04);
-  gr->GetYaxis()->SetTitleSize(0.04);
-  gr->GetYaxis()->SetLabelSize(0.04);
 
-  //Set the axis range
-  float timemax = TMath::MaxElement(gr_vset->GetN(),gr_vset->GetX());
-  float vsetmax = TMath::MaxElement(gr_vset->GetN(),gr_vset->GetY());
-  float imonmax = TMath::MinElement(gr_imon->GetN(),gr_imon->GetY());
-
-  xmin = 0.; xmax = timemax + 10.;
-  y1min = 0.; y1max = vsetmax + 10.;
-  y2min = 0.; y2max = imonmax + 10.;
-
-  gr->SetMinimum(y1min);
-  gr->SetMaximum(y1max);
-  gr->GetXaxis()->SetLimits(xmin, xmax);
-
-  //Set the 2nd yaxis
+  //2nd yaxis
   axis = new TGaxis(xmax, y1min, xmax, y1max, y2min, y2max, 510, "+L");
-  axis->SetTitle("Current (#muA)");
-  axis->SetTitleSize(0.04);
-  axis->SetTitleFont(42);
-  axis->SetLabelSize(0.04);
-  axis->SetLabelFont(42);
-  axis->Draw();
 
-  //additional text
+  //addtional text
   text1 = Form("Humidity : %f%", rh);
   text2 = Form("Temperature : %f#circC", temperature);
 
   latex1 = new TLatex(.13, .87, text1);
-  latex1->SetNDC();
-  latex1->SetTextSize(0.04);
-  latex1->SetTextAlign(12);
-  latex1->SetTextFont(42);
-  latex1->Draw();
-
   latex2 = new TLatex(.13, .82, text2);
-  latex2->SetNDC();
-  latex2->SetTextSize(0.04);
-  latex2->SetTextAlign(12);
-  latex2->SetTextFont(42);
-  latex2->Draw();
 
   //legend
   legend = new TLegend(.77, .75, .87, .87);
-  legend->AddEntry(gr_vset, "V_{set}", "l");
-  legend->AddEntry(gr_vmon, "V_{mon}", "l");
-  legend->AddEntry(gr_imon, "I_{mon}", "l");
-  legend->SetLineWidth(0);
-  legend->Draw();
+
 }//Painter::Painter()
 
 //////////
@@ -137,11 +91,16 @@ Painter::~Painter()
   string print_name = file_path.substr(0, file_path.find_last_of("/")) + "/" + can_name + ".png";
   
   can_self->Print(print_name.c_str(), "png");
-  
+ 
+  delete gr; 
   delete gr_vset;
   delete gr_vmon;
   delete gr_imon;
   delete can_self;
+  delete axis;
+  delete latex1;
+  delete latex2;
+  delete legend;
 }//Painter::~Painter()
 
 //////////
@@ -150,7 +109,59 @@ void Painter::Draw(TVirtualPad* pad)
 {
   pad->cd();
 
-  gr_vset->Draw("AP*");
+  gr->Add(gr_vset);
+  gr->Add(gr_vmon);
+  gr->Add(gr_imon);
+  gr->Draw("AP*");
+
+  gr->SetTitle(title);
+  gr->GetXaxis()->SetTitle("Time (s)");
+  gr->GetYaxis()->SetTitle("Voltage (V)");
+  gr->GetXaxis()->SetTitleSize(0.04);
+  gr->GetXaxis()->SetLabelSize(0.04);
+  gr->GetYaxis()->SetTitleSize(0.04);
+  gr->GetYaxis()->SetLabelSize(0.04);
+
+  float timemax = TMath::MaxElement(gr_vset->GetN(), gr_vset->GetX());
+  float vsetmax = TMath::MaxElement(gr_vset->GetN(), gr_vset->GetY());
+  float imonmax = TMath::MinElement(gr_imon->GetN(), gr_imon->GetY());
+
+  xmin = 0.; xmax = timemax + 10.;
+  y1min = 0.; y1max = vsetmax + 10.;
+  y2min = 0.; y2max = imonmax + 10.;
+
+  gr->SetMinimum(y1min);
+  gr->SetMaximum(y1max);
+  gr->GetXaxis()->SetLimits(xmin, xmax); 
+  gr->SetMinimum(y1min);
+  gr->SetMaximum(y1max);
+  gr->GetXaxis()->SetLimits(xmin, xmax); 
+ 
+  axis->SetTitle("Current (#muA)");
+  axis->SetTitleSize(0.04);
+  axis->SetTitleFont(42);
+  axis->SetLabelSize(0.04);
+  axis->SetLabelFont(42);
+  axis->Draw();
+
+  latex1->SetNDC();
+  latex1->SetTextSize(0.04);
+  latex1->SetTextAlign(12);
+  latex1->SetTextFont(42);
+  latex1->Draw();
+
+  latex2->SetNDC();
+  latex2->SetTextSize(0.04);
+  latex2->SetTextAlign(12);
+  latex2->SetTextFont(42);
+  latex2->Draw();
+
+  legend->AddEntry(gr_vset, "V_{set}", "l");
+  legend->AddEntry(gr_vmon, "V_{mon}", "l");
+  legend->AddEntry(gr_imon, "I_{mon}", "l");
+  legend->SetLineWidth(0);
+  legend->Draw(); 
+
 }//void Painter::Draw(TVirtualPad* pad) 
 
 //////////
