@@ -24,7 +24,7 @@ void Server::Run()
   while(1)
     {
       string msg = Receive_From_Client();
-      
+
       //new connection
       if(msg.find("##HEAD##")!=string::npos) Register_Client(msg);
 
@@ -129,7 +129,7 @@ void Server::HV_Control_Status(const string& msg)
 
   int value;
   CAENHVRESULT result = hv_controller.Status(channel, value);
-    
+  
   if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK## " + to_string(value));
   else Transmit_To_Client(channel, "##BAD##");
   
@@ -189,8 +189,9 @@ void Server::Register_Client(const string& msg)
 
   cout << "Register client #Ch." << channel << endl;
   
-  fd_client[channel] = open(path_fifo_client[channel].c_str(), O_WRONLY);
-
+  //fd_client[channel] = open(path_fifo_client[channel].c_str(), O_WRONLY);
+  fd_client[channel] = open(path_fifo_client[channel].c_str(), O_RDWR);
+  
   if(fd_client[channel]<0)
     {
       string error = "class Server: Fail to open FIFO for client #Ch." + to_string(channel) + ".";
@@ -212,7 +213,7 @@ void Server::Transmit_To_Client(const int& channel, const string& msg)
     {
       string error = "class Server: Fail to write FIFO for client #Ch." + to_string(channel) + ".";
       throw error;
-    }
+  }
 
   cout << "Server say: " << msg << endl;
   
