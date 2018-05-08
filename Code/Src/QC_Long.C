@@ -62,7 +62,10 @@ void QC_Long::Body()
 	      
 	      trip_duration += recovery_duration;
 	    }
-	  
+
+	  //check HV stability. If HV is on ramping up or down, don't count time.
+	  if(Check_Stability()==false) stage_start = system_clock::now();
+	    
 	  float vmon = client.Request_HV_Control_Get("VMon");
 	  float imon = client.Request_HV_Control_Get(IMON);
 	  

@@ -66,8 +66,6 @@ void Monitor::Run()
 		{
 		  painter[i]->Update();
 		  painter[i]->Draw(canvas->cd(i+1));
-
-		  canvas->Update();
 		}
 	    }//channel occupied
 	  else

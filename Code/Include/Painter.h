@@ -6,6 +6,10 @@
 #include <TGraphErrors.h>
 #include <TCanvas.h>
 #include <TAxis.h>
+#include <TLatex.h>
+#include <TGaxis.h>
+#include <TLegend.h>
+#include <TMath.h>
 
 using namespace std;
 
@@ -21,6 +25,7 @@ class Painter
  protected:
   TVirtualPad* pad;
 
+  string process;
   int runnumber;
   string foil_name;
   int channel;
@@ -29,25 +34,18 @@ class Painter
   string tester;
   
   string file_path;
-  ifstream fin;  
- 
-  float xmin;
-  float xmax;
-  float y1min;
-  float y1max;
-  float y2min;
-  float y2max;
-
-  TString title;
-  TString text1;
-  TString text2;
-
-  TMultiGraph* gr; 
+  ifstream fin;
+  
   TGraphErrors* gr_vset;
   TGraphErrors* gr_vmon;
   TGraphErrors* gr_imon;
+  TGraphErrors* gr_imon_scale;
+  
   TGaxis* axis;
-  TLegend* legend;
+  
+  TLatex* latex0;
   TLatex* latex1;
   TLatex* latex2;
+  
+  TLegend* legend;
 };
