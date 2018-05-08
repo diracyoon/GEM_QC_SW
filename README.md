@@ -29,7 +29,7 @@ The class Server relays the IO requsts from Client to HV_Controller and vice ver
 ### class Client
 The class Client communicates HV module via class Server as class QC_Base requests. 
 ### QC_Base
-The class QC_Base do most of things for QC such as controlling class Client, making result log and ETC.    
+The class QC_Base does most of things for QC such as controlling class Client, making result log and ETC.    
 ### Preparation_QC_Long
 Daughter class of QC_Base. Function for Preparation of QC Long are defined in here.
 ### QC_Long
