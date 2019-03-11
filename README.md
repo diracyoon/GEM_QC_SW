@@ -47,6 +47,7 @@ Class for submitting log to elog.
 ### Running Monitor
 You need to set the environmental variables first.
 <pre>
+sudo -s
 cd Macro
 source Env.sh
 ./Run_Monitor.sh
