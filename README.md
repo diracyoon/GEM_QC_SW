@@ -72,7 +72,7 @@ You can run the Preparation_QC_Long (QC_Long) as many as HV module channel. Ever
 ## Output
 Measured I-V curve will show up Output/Preparation (QC_Long) directory.
 <pre>
-File name of output file: (runnumber)_(foil id).result
+File name of output file: (foil id)_(trial_number).result
 structure of output file:
 Overall information about the QC test.
 ##############################
