@@ -8,7 +8,7 @@ using namespace std;
 class HV_Controller
 {
  public:
-  HV_Controller(const string& a_port);
+  HV_Controller(const string& a_port, const string& a_mode);
   ~HV_Controller();
 
   CAENHVRESULT Get(const unsigned short& channel, const string& parameter, float& value);
@@ -17,7 +17,9 @@ class HV_Controller
 		      
  protected:
   string port;
-
+  
+  string mode;
+  
   int handle;
 
   unsigned short n_slot;

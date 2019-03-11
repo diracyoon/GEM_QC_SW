@@ -21,7 +21,7 @@ class HV_Contoller;
 class Server
 {
  public:
-  Server(const string& a_path_fifo, const string& a_port);
+  Server(const string& a_path_fifo, const string& a_port="test_port", const string& a_mode="NORMAL");
   ~Server();
 
   void Run();
@@ -31,6 +31,8 @@ class Server
   
   string path_fifo_server;
 
+  string mode;
+  
   int fd_server;
 
   int max_channel;

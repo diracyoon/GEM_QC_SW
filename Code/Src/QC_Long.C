@@ -2,7 +2,7 @@
 
 //////////
 
-QC_Long::QC_Long(const int& a_runnumber, const string& a_foil_name, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : QC_Base(a_runnumber, a_foil_name, a_channel, a_rh, a_temp, a_tester, a_path, a_verbosity)
+QC_Long::QC_Long(const string& a_foil_name, const int& a_trial_number, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : QC_Base(a_foil_name, a_trial_number, a_channel, a_rh, a_temp, a_tester, a_path, a_verbosity)
 {
 }//QC_Long::QC_Long()
 

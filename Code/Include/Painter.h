@@ -26,8 +26,8 @@ class Painter
   TVirtualPad* pad;
 
   string process;
-  int runnumber;
   string foil_name;
+  int trial_number;
   int channel;
   float rh;
   float temperature;

@@ -2,10 +2,13 @@
 
 //////////
 
-HV_Controller::HV_Controller(const string& a_port) : port(a_port)
+HV_Controller::HV_Controller(const string& a_port, const string& a_mode) : port(a_port), mode(a_mode)
 {
-  Make_Connection();
-  Create_HV_Map();
+  if(mode.compare("NORMAL")==0)
+    {
+      Make_Connection();
+      Create_HV_Map();
+    }
 }//HV_Controller::HV_Controller()
 
 //////////

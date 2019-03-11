@@ -2,7 +2,7 @@
 
 //////////
 
-Preparation_QC_Long::Preparation_QC_Long(const int& a_runnumber, const string& a_foil_name, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : QC_Base(a_runnumber, a_foil_name, a_channel, a_rh, a_temp, a_tester, a_path, a_verbosity)
+Preparation_QC_Long::Preparation_QC_Long(const string& a_foil_name, const int& a_trial_number, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : QC_Base(a_foil_name, a_trial_number, a_channel, a_rh, a_temp, a_tester, a_path, a_verbosity)
 {
 }//Preparation_QC_Long::Preparation_QC_Long()
 
@@ -43,7 +43,8 @@ void Preparation_QC_Long::Body()
 
       float imon_old = 0;
       float imon = 0;
-      
+
+      bool chk_print = false;
       while(1)
 	{
 	  //trip check
@@ -58,7 +59,7 @@ void Preparation_QC_Long::Body()
 		  
 		  n_trial[i]++;
 		  
-		  if(3<n_trial[i])
+		  if(2<n_trial[i])
 		    {
 		      //turn off HV for safety
 		      client.Request_HV_Control_Set("Pw", 0);
@@ -97,12 +98,21 @@ void Preparation_QC_Long::Body()
 	  result_out << process_duration_f << " " << vset << " " << vmon << " " << imon << endl;
 
 	  cout << fixed;
-	  if((int)process_duration_f%10==0) cout << "Process duration = " << setprecision(2) << process_duration_f << "s, stability duration = " << setprecision(2) << stability_duration_f << "s, V_set = " << setprecision(2) << vset << "V, V_Mon = " << setprecision(2) << vmon << "V, I_Mon = " << setprecision(2) << imon << "uA" << endl;
+	  if((int)process_duration_f%10==0)
+	    {
+	      if(chk_print==false)
+		{
+		  cout << "Process duration = " << setprecision(2) << process_duration_f << "s, stability duration = " << setprecision(2) << stability_duration_f << "s, V_set = " << setprecision(2) << vset << "V, V_Mon = " << setprecision(2) << vmon << "V, I_Mon = " << setprecision(2) << imon << "uA" << endl;
 
+		  chk_print = true;
+		}
+	    }
+	  else chk_print = false;
+	  
 	  //end of stage
 	  if(vec_config_data[i].time<stability_duration_f) break;
 
-	  this_thread::sleep_for(chrono::seconds(1));
+	  this_thread::sleep_for(chrono::milliseconds(500));
 	}//while
     }//
 

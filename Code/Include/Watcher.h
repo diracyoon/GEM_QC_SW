@@ -14,8 +14,8 @@ typedef struct _watch_result
 {
   int pid;
   string process;
-  int runnumber;
   string foil_name;
+  int trial_number;
   int channel;
   float rh;
   float temperature;

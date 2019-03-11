@@ -12,11 +12,6 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   istringstream iss;
   
   //parsing
-  //runnumber
-  getline(fin, buf);
-  iss.str(buf);
-  iss >> buf;
-  iss >> runnumber;
 
   //foil name
   getline(fin, buf);
@@ -25,7 +20,15 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   iss >> buf;
   iss >> buf;
   iss >> foil_name;
-    
+
+  //trial number
+  getline(fin, buf);
+  iss.clear();
+  iss.str(buf);
+  iss >> buf;
+  iss >> buf;
+  iss >> trial_number;
+  
   //channel
   getline(fin, buf);
   iss.clear();
@@ -105,7 +108,7 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   axis->SetLabelFont(42);
   
   //addtional text
-  string text = "Runnumber: " + to_string(runnumber);
+  string text = "Trial number: " + to_string(trial_number);
   latex0 = new TLatex(.13, .85, text.c_str());
   latex0->SetNDC();
   latex0->SetTextSize(0.04);
@@ -139,7 +142,11 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
 
 Painter::~Painter()
 {
-  string can_name = string(5 - to_string(runnumber).length(), '0') + to_string(runnumber) + "_" + foil_name;
+  this->Update();
+  
+  string can_name = foil_name;
+  can_name += "_" + string(2 - to_string(trial_number).length(), '0') + to_string(trial_number);
+  
   TCanvas* can_self = new TCanvas(can_name.c_str(), can_name.c_str(), 800, 500);
   can_self->Draw();
 
@@ -175,7 +182,7 @@ void Painter::Draw(TVirtualPad* pad)
   
   float x_max = time_max*1.1;
   float v_max = max(vset_max, vmon_max)*1.1;
-  float i_max = (imon_max+0.1)*1.1;
+  float i_max = 0.01;//(imon_max+0.1)*1.1;
   
   //scale graph for imon 
   float scale = v_max/i_max;
@@ -202,6 +209,7 @@ void Painter::Draw(TVirtualPad* pad)
   axis->SetY2(v_max);
   axis->SetWmin(0);
   axis->SetWmax(i_max);
+  axis->SetTitleOffset(1.4);
   axis->Draw();
   
   latex0->Draw();

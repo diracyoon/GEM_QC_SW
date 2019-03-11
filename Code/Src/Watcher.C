@@ -52,14 +52,14 @@ void Watcher::Watch_Process(vector<Watch_Result>& vec_watch_result)
 
 	  iss.str(cmd);
 	  iss >> watch_result.process;
-	  iss >> watch_result.runnumber;
 	  iss >> watch_result.foil_name;
+	  iss >> watch_result.trial_number;
 	  iss >> watch_result.channel;
 	  iss >> watch_result.rh;
 	  iss >> watch_result.temperature;
 	  iss >> watch_result.tester;
-
-	  vec_watch_result.push_back(watch_result);
+	  
+ 	  vec_watch_result.push_back(watch_result);
 	}
     }
 

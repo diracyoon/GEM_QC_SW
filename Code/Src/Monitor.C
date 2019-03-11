@@ -18,7 +18,7 @@ Monitor::~Monitor()
 void Monitor::Run()
 {
   canvas = new TCanvas("Monitor", "Monitor", 1200, 800);
-  canvas->Divide(2, 2);
+  canvas->Divide(4, 2);
   canvas->Draw();
     
   while(1)
@@ -45,20 +45,21 @@ void Monitor::Run()
 	  
 	  if(chk_ch_found==true)
 	    {
-	      Watch_Result watch_result = vec_watch_result[index];
-
 	      //new measurement 
 	      if(chk_ch_occupied[i]==false)
 		{
-		  cout << "New QC detected. Occupied channel = " << watch_result.channel << ", PID = " << watch_result.pid << ", Process = " << watch_result.process << endl;
+		  watch_result[i] = vec_watch_result[index];
+		  
+		  cout << "New QC detected. Occupied channel = " << watch_result[i].channel << ", PID = " << watch_result[i].pid << ", Process = " << watch_result[i].process << endl;
 		  this_thread::sleep_for(chrono::seconds(1));
 		  
 		  chk_ch_occupied[i] = true;
 
-		  string process = watch_result.process.substr(watch_result.process.find_last_of("/")+1);
-		  string file_path(getenv("QC_SW_PATH"));
-		  file_path += "/Output/" + process + "/" + string(5 - to_string(watch_result.runnumber).length(), '0') + to_string(watch_result.runnumber) + "_" + watch_result.foil_name + ".result";
-		  
+		  string process = watch_result[i].process.substr(watch_result[i].process.find_last_of("/")+1);
+		  		  
+		  string file_path = getenv("QC_SW_PATH");
+		  file_path +=  "/Output/" + process + "/" + watch_result[i].foil_name + "/" + watch_result[i].foil_name + "_"  + string(2 - to_string(watch_result[i].trial_number).length(), '0') + to_string(watch_result[i].trial_number) + ".result";
+		 
 		  painter[i] = new Painter(file_path);
 		}
 	      //ongoing measurement
@@ -74,12 +75,19 @@ void Monitor::Run()
 	      if(chk_ch_occupied[i]==true)
 		{
 		  delete painter[i];
+
+		  //submit to logbook
+		  string foil_name = watch_result[i].foil_name;
+		  string process = watch_result[i].process;
+		  int trial_number = watch_result[i].trial_number;
+		  
+		  Submitter submitter(foil_name, process, trial_number);
 		  
 		  chk_ch_occupied[i] = false;  
-		  
+		 		  
 		  cout << "Channel #" << i << " is released." << endl;
 		}
-	    }//
+	    }//channel released
 	}//channel loop
 	
       gSystem->ProcessEvents();

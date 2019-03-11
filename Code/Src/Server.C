@@ -2,7 +2,7 @@
 
 //////////
 
-Server::Server(const string& a_path_fifo, const string& a_port) : hv_controller(a_port), path_fifo_server(a_path_fifo)
+Server::Server(const string& a_path_fifo, const string& a_port, const string& a_mode) : hv_controller(a_port, a_mode), path_fifo_server(a_path_fifo), mode(a_mode)
 {
   Initialization();
 }//Server::Server()
@@ -30,16 +30,16 @@ void Server::Run()
 
       //end connection
       if(msg.find("##END##")!=string::npos) Erase_Client(msg);
-
+     
       //request HV get 
       if(msg.find("##GET##")!=string::npos) HV_Control_Get(msg);
       
       //request HV set
       if(msg.find("##SET##")!=string::npos) HV_Control_Set(msg);
-
+      
       //request HV get status
       if(msg.find("##STATUS##")!=string::npos) HV_Control_Status(msg);
-            
+      
       //this_thread::sleep_for(chrono::milliseconds(10));
     }
 
@@ -77,8 +77,15 @@ void Server::HV_Control_Get(const string& msg)
   string parameter;
   iss >> parameter;
 
-  float value;
+  float value = 0;
 
+  if(mode.compare("DEBUG")==0)
+    {
+      Transmit_To_Client(channel, "##OK## " + to_string(value));
+
+      return;
+    }
+  
   CAENHVRESULT result = hv_controller.Get(channel, parameter, value);
   
   if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK## " + to_string(value));
@@ -106,6 +113,13 @@ void Server::HV_Control_Set(const string& msg)
   float value;
   iss >> value;
 
+  if(mode.compare("DEBUG")==0)
+    {
+      Transmit_To_Client(channel, "##OK##");
+      
+      return;
+    }
+  
   CAENHVRESULT result = hv_controller.Set(channel, parameter, value);
 
   if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK##");
@@ -127,7 +141,15 @@ void Server::HV_Control_Status(const string& msg)
   int channel;
   channel = stoi(buf.substr(2, 1), NULL);
 
-  int value;
+  int value = 0;
+
+  if(mode.compare("DEBUG")==0)
+    {
+      Transmit_To_Client(channel, "##OK## " + to_string(value));
+      
+      return;
+    }
+  
   CAENHVRESULT result = hv_controller.Status(channel, value);
   
   if(result==CAENHV_OK) Transmit_To_Client(channel, "##OK## " + to_string(value));
@@ -149,7 +171,7 @@ void Server::Initialization()
   fd_server = open(path_fifo_server.c_str(), O_RDWR);
   if(fd_server<0) throw "class Server: Can not open FIFO for server.";
 
-  max_channel = 4;
+  max_channel = 8;
 
   //memory allocation for client handling
   fd_client = new int[max_channel];

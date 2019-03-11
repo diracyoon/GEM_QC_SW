@@ -2,7 +2,7 @@
 
 //////////
 
-QC_Base::QC_Base(const int& a_runnumber, const string& a_foil_name, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : runnumber(a_runnumber), foil_name(a_foil_name), channel(a_channel), rh(a_rh), temp(a_temp), tester(a_tester), path(a_path), client(a_channel, a_path, a_verbosity)
+QC_Base::QC_Base(const string& a_foil_name, const int& a_trial_number, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : foil_name(a_foil_name), trial_number(a_trial_number), channel(a_channel), rh(a_rh), temp(a_temp), tester(a_tester), path(a_path), client(a_channel, a_path, a_verbosity)
 {
 }//QC_Base::QC_Base()
 
@@ -68,25 +68,28 @@ void QC_Base::Initialization(const string& type)
   Result_Log_Maker(type);
   Read_Config_Data(type+".config");
 
-  Initialization_HV();
+  Initialization_HV(type);
 
   return;
 }//void QC_Base::Initialization(const string& type)
 
 //////////
 
-void QC_Base::Initialization_HV()
+void QC_Base::Initialization_HV(const string& type)
 {
   client.Request_HV_Control_Set("Pw", 1);
 
-  client.Request_HV_Control_Set("MaxV", 615);
+  client.Request_HV_Control_Set("MaxV", 620);
   client.Request_HV_Control_Set("RUp", 5);
   client.Request_HV_Control_Set("RDwn", 50);
 
-  client.Request_HV_Control_Set("ISet", 1);
+  client.Request_HV_Control_Set("ImonRange", 1);
+  if(type.compare("Preparation_QC_Long")==0) client.Request_HV_Control_Set("ISet", 2);
+  else if(type.compare("QC_Long")==0) client.Request_HV_Control_Set("ISet", 2);
+  
   client.Request_HV_Control_Set("Trip", 0.0);
   client.Request_HV_Control_Set("PDwn", 0);
-
+  
   n_trip_total = 0;
   n_trip_stage = 0;
   
@@ -109,12 +112,9 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   client.Request_HV_Control_Set("Pw", 0);
   client.Request_HV_Control_Set("Pw", 1);
 
-  //pull back
-  if(mode_pull_back==true && 3<n_trip_stage) return true;
-  
   client.Request_HV_Control_Set("VSet", vset);
 
-  this_thread::sleep_for(chrono::seconds(3));
+  this_thread::sleep_for(chrono::seconds(5));
   
   //voltage recover
   while(1)
@@ -142,7 +142,7 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
       
       cout << "Recovering trip. VSet: " << vset << ", VMon = " << vmon << endl;
             
-      this_thread::sleep_for(chrono::seconds(1));
+      this_thread::sleep_for(chrono::milliseconds(500));
     }
   
   system_clock::time_point time_end = system_clock::now();
@@ -150,7 +150,10 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   duration<float> duration = time_end - time_start;
   recovery_duration = duration.count();
 
-  //no pull back
+  //pull back
+  if(mode_pull_back==true && 3<n_trip_stage) return true;
+  else return false;
+
   return false;
 }//float QC_Base::Recover_Trip(const float& vset)
   
@@ -197,9 +200,10 @@ void QC_Base::Read_Config_Data(const string& config_file)
 
 void QC_Base::Result_Log_Maker(const string& type)
 {
-  path_result = path + "/Output/" + type + "/";
-  path_result += string(5 - to_string(runnumber).length(), '0') + to_string(runnumber);
-  path_result += "_" + foil_name + ".result";
+  path_result = path;
+  path_result += "/Output/" + type + "/" + foil_name + "/" + foil_name + "_";
+  path_result += string(2 - to_string(trial_number).length(), '0') + to_string(trial_number);
+  path_result += ".result";
   
   //check file existence
   ifstream fin_check;
@@ -209,8 +213,8 @@ void QC_Base::Result_Log_Maker(const string& type)
   result_out.open(path_result);
   if(!result_out.is_open()) throw "class QC_Base: Can not open file for result log.";
 
-  result_out << "Runnumber: " << runnumber << endl;
   result_out << "Foil name: " << foil_name << endl;
+  result_out << "Trial number: " << trial_number << endl;
   result_out << "Channel: " << channel << endl;
   result_out << "Relative humidity (%): " << rh  << endl;
   result_out << "Temperature (c): " << temp << endl;

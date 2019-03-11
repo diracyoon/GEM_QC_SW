@@ -35,11 +35,13 @@ Daughter class of QC_Base. Function for Preparation of QC Long are defined in he
 ### QC_Long
 Daughter class of QC_Base. QC Long specific functions are defined in here.
 ### Monitor
-Class for Monitoring
+Class for monitoring and submitting log to elog.
 ### Watcher
 Check QC_Long or Preparation_QC_Long processes are runnunig or not.
 ### Painter
 Class for drawing.
+### Submitter
+Class for submitting log to elog.
 
 ## Usage
 ### Running Monitor
@@ -66,7 +68,7 @@ source Env.sh
 ./Run_Preparation_QC_Long.sh (./Run_QC_Long.sh)
 </pre>
 You can run the Preparation_QC_Long (QC_Long) as many as HV module channel. Every client with different channel number runs independently. If the server is not running or owned HV channel by other channel process, Run_Preparation_QC_Long.sh (Run_QC_Long.sh).sh script will notice it and kill itself. Anyway you should keep focus not to make any mistake.
-### Output
+## Output
 Measured I-V curve will show up Output/Preparation (QC_Long) directory.
 <pre>
 File name of output file: (runnumber)_(foil id).result
@@ -78,4 +80,9 @@ Time and HV configuration for the QC test.
 Time V_Set V_Mon I_Mon
 ##############################
 number of trip during the QC test.
+</pre>
+### E-log
+Log will be automatically submitted to e-log by class monitor when QC processes are done. Registration is needed to access the e-log. Don't be surprised when you access the e-log. Probably your web browser will warn you that the certificate of e-log is self signed. It's normal. You can ignore it. 
+<pre>
+URL: https://147.46.50.23:31417/QC
 </pre>

@@ -10,12 +10,12 @@ int main(int argc, char* argv[])
   if(argc!=7)
     {
       cerr << "Wrong number of argc." << endl;
-      cout << "argv[1]: runnumber, argv[2]: foil name, argv[3]: channel number, argv[4]: relative humidity, argv[5]: temperature, argv[6]: tester" << endl;
+      cout << "argv[1]: foil name, argv[2]: trial number, argv[3]: channel number, argv[4]: relative humidity, argv[5]: temperature, argv[6]: tester" << endl;
       exit(1);
     }
 
-  int runnumber = atoi(argv[1]);
-  string foil_name = argv[2];
+  string foil_name = argv[1];
+  int trial_number = atoi(argv[2]);
   int channel = atoi(argv[3]);
   float rh = atof(argv[4]);
   float temp = atof(argv[5]);
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   
   try
     {
-      QC_Long qc_long(runnumber, foil_name, channel, rh, temp, tester, path);
+      QC_Long qc_long(foil_name, trial_number, channel, rh, temp, tester, path);
       qc_long.Run();	
     }
   catch(const string& error)
