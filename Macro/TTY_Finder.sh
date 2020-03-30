@@ -24,11 +24,10 @@ else
 
     if [ test $tty ];
     then
-	echo "Can't find device!"
+	echo "Error!! Can't find device!"
 	exit
     fi
 fi
 
-rm -f ${QC_SW_PATH}/Macro/FIFO
-${QC_SW_PATH}/Bin/Server $tty $mode
+echo $tty
 

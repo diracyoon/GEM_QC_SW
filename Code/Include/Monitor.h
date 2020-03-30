@@ -18,12 +18,14 @@ using namespace std;
 class Monitor
 {
  public:
-  Monitor();
+  Monitor(const bool& a_chk_submit=true);
   ~Monitor();
 
   void Run();
   
  protected:
+  bool chk_submit;
+  
   Watcher watcher;
   
   TCanvas* canvas;

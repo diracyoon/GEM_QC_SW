@@ -213,6 +213,7 @@ void QC_Base::Result_Log_Maker(const string& type)
   result_out.open(path_result);
   if(!result_out.is_open()) throw "class QC_Base: Can not open file for result log.";
 
+  result_out << "Mode: " << client.Get_Mode() << endl;
   result_out << "Foil name: " << foil_name << endl;
   result_out << "Trial number: " << trial_number << endl;
   result_out << "Channel: " << channel << endl;

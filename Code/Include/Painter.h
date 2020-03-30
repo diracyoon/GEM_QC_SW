@@ -25,6 +25,7 @@ class Painter
  protected:
   TVirtualPad* pad;
 
+  string mode;
   string process;
   string foil_name;
   int trial_number;

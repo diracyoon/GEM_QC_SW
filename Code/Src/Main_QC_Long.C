@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
   if(argc!=7)
     {
       cerr << "Wrong number of argc." << endl;
-      cout << "argv[1]: foil name, argv[2]: trial number, argv[3]: channel number, argv[4]: relative humidity, argv[5]: temperature, argv[6]: tester" << endl;
+      cerr << "argv[1]: foil name, argv[2]: trial number, argv[3]: channel number, argv[4]: relative humidity, argv[5]: temperature, argv[6]: tester" << endl;
       exit(1);
     }
 

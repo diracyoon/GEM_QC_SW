@@ -21,7 +21,7 @@ class HV_Contoller;
 class Server
 {
  public:
-  Server(const string& a_path_fifo, const string& a_port="test_port", const string& a_mode="NORMAL");
+  Server(const string& a_path_fifo, const string& a_port="test_port", const string& a_mode="NORMAL", const bool& a_verbosity=false);
   ~Server();
 
   void Run();
@@ -32,6 +32,7 @@ class Server
   string path_fifo_server;
 
   string mode;
+  bool verbosity;
   
   int fd_server;
 

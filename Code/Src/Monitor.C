@@ -2,7 +2,7 @@
 
 //////////
 
-Monitor::Monitor() : watcher()
+Monitor::Monitor(const bool& a_chk_submit) : chk_submit(a_chk_submit), watcher()
 {
   for(int i=0; i<NUM_CHANNEL; i++) chk_ch_occupied[i] = false;
 }//Monitor::Monitor()
@@ -26,7 +26,7 @@ void Monitor::Run()
       vector<Watch_Result> vec_watch_result;
       watcher.Watch_Process(vec_watch_result);
       
-      cout << "Number of occupied channel = " << vec_watch_result.size() << endl;
+      //cout << "Number of occupied channel = " << vec_watch_result.size() << endl;
       
       for(int i=0; i<NUM_CHANNEL; i++)
 	{
@@ -49,8 +49,8 @@ void Monitor::Run()
 	      if(chk_ch_occupied[i]==false)
 		{
 		  watch_result[i] = vec_watch_result[index];
-		  
-		  cout << "New QC detected. Occupied channel = " << watch_result[i].channel << ", PID = " << watch_result[i].pid << ", Process = " << watch_result[i].process << endl;
+
+		  cout << "Monitor::New QC detected. Occupied channel = " << watch_result[i].channel << ", PID = " << watch_result[i].pid << ", Process = " << watch_result[i].process << endl;
 		  this_thread::sleep_for(chrono::seconds(1));
 		  
 		  chk_ch_occupied[i] = true;
@@ -77,15 +77,11 @@ void Monitor::Run()
 		  delete painter[i];
 
 		  //submit to logbook
-		  string foil_name = watch_result[i].foil_name;
-		  string process = watch_result[i].process;
-		  int trial_number = watch_result[i].trial_number;
-		  
-		  Submitter submitter(foil_name, process, trial_number);
+		  if(chk_submit)  Submitter submitter(watch_result[i].foil_name, watch_result[i].process, watch_result[i].trial_number);
 		  
 		  chk_ch_occupied[i] = false;  
 		 		  
-		  cout << "Channel #" << i << " is released." << endl;
+		  cout << "Monitor::Channel #" << i << " is released." << endl;
 		}
 	    }//channel released
 	}//channel loop

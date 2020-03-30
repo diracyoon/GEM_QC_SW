@@ -7,11 +7,12 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-  if(argc!=2&&argc!=3)
+  if(argc!=2&&argc!=3&&argc!=4)
     {
       cerr << "Wrong number of argc." << endl;
-      cout << "argv[1]: port i.e. ttyUSB0." << endl;
-      cout << "argv[2]: mode i.e. NORMAL or DEBUG" << endl;
+      cerr << "argv[1]: port i.e. ttyUSB0." << endl;
+      cerr << "argv[2]: mode i.e. NORMAL or DEBUG. Default is NORMAL." << endl;
+      cerr << "argv[3]: verbosity i.e. true or false. Default is false." << endl;
       exit(1);
     }
   
@@ -24,7 +25,7 @@ int main(int argc, char* argv[])
     }
 
   string fifo_path = path;
-  fifo_path += "/Macro/FIFO";
+  fifo_path += "/FIFOs/FIFO";
 
   string port = argv[1];
 

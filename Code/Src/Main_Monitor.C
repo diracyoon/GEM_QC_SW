@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <cstdlib>
 
 #include <TROOT.h>
 #include <TApplication.h>
@@ -25,10 +26,23 @@ int main(int argc, char** argv)
       cerr << "Enviromental variables aren't set. Source Env.sh first." << endl;
       return -1;
      }
-  
+
+  if(argc!=1&&argc!=2)
+    {
+      cerr << "Wrong number of argc." << endl;
+      cerr << "argc[1]: submit to e-log or not i.e. TRUE or FALSE. Default is TRUE." << endl;
+      exit(1);
+    }
+
+   bool chk_submit = true;
+  if(argc==2)
+    {
+       if(strcmp(argv[1], "FALSE")==0) chk_submit = false;
+    }
+   
   theApp = new TApplication("Monitor", &argc, argv);
   
-  Monitor monitor;
+  Monitor monitor(chk_submit);
   monitor.Run();
   
   theApp->Run(true);

@@ -13,6 +13,13 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   
   //parsing
 
+  //mode
+  getline(fin, buf);
+  iss.clear();
+  iss.str(buf);
+  iss >> buf;
+  iss >> mode;
+  
   //foil name
   getline(fin, buf);
   iss.clear();

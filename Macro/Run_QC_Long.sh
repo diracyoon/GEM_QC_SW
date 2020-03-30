@@ -94,7 +94,7 @@ then
 fi
 
 file_count=`ls $dir_output | grep result | wc -l`
-runnumber=`expr $file_count`
+trial_number=`expr $file_count`
 
 echo "Assigned trial_number = "${trial_number}
 echo

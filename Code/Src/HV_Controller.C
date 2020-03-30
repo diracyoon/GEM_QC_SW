@@ -21,47 +21,79 @@ HV_Controller::~HV_Controller()
 
 CAENHVRESULT HV_Controller::Get(const unsigned short& channel, const string& parameter, float& value)
 {
-  unsigned short ch_list[1] = {channel};
+  if(mode.compare("DEBUG")==0)
+    {
+      //null value
+      value = 0;
 
-  CAENHVRESULT result;
-  if(parameter.compare("Pw")==0)
-    {
-      bool value_list[1];
-      result = CAENHV_GetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
-      value = value_list[0];
-    }
+      CAENHVRESULT result;
+      return result;
+    }//debug mode
+  
   else
-    {
-      float value_list[1];
-      result = CAENHV_GetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
-      value = value_list[0];
-    }
-   
-  return result;
+    {  
+      unsigned short ch_list[1] = {channel};
+      
+      CAENHVRESULT result;
+      if(parameter.compare("Pw")==0)
+	{
+	  bool value_list[1];
+	  result = CAENHV_GetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+	  value = value_list[0];
+	}
+      else
+	{
+	  float value_list[1];
+	  result = CAENHV_GetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+	  value = value_list[0];
+	}
+      
+      return result;
+    }//normal mode
+  
 }//CAENHVRESULT HV_Controller::Get(const int& channel, const string& parameter, const float& value)
 
 //////////
 
 CAENHVRESULT HV_Controller::Set(const unsigned short& channel, const string& parameter, const float& value)
 {
-  unsigned short ch_list[1] = {channel};
-  float value_list[1] = {value};
-  
-  CAENHVRESULT result = CAENHV_SetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
-    
-  return result;
+  if(mode.compare("DEBUG")==0)
+    {
+      CAENHVRESULT result;
+      return result;
+    }//debug mode
+
+  else
+    {
+      unsigned short ch_list[1] = {channel};
+      float value_list[1] = {value};
+      
+      CAENHVRESULT result = CAENHV_SetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+      
+      return result;
+    }//normal mode
 }//CAENHVRESULT HV_Controller::Set(const int& channel, const string& parameter, const float& value)
 
 CAENHVRESULT HV_Controller::Status(const unsigned short& channel, int& value)
 {
-  unsigned short ch_list[1] = {channel};
+  if(mode.compare("DEBUG")==0)
+    {
+      CAENHVRESULT result;
+      return result;
+    }//debug mode
 
-  unsigned int value_list[1];
-  CAENHVRESULT result = CAENHV_GetChParam(handle, 0, "ChStatus", 1, ch_list, value_list);
+  else
+    {
+      unsigned short ch_list[1] = {channel};
 
-  value = value_list[0];
-
-  return result;
+      unsigned int value_list[1];
+      CAENHVRESULT result = CAENHV_GetChParam(handle, 0, "ChStatus", 1, ch_list, value_list);
+      
+      value = value_list[0];
+      
+      return result;
+    }
+  
 }//CAENHVRESULT HV_Controller::Status(const unsigned short& channel, int& value)
 
 //////////

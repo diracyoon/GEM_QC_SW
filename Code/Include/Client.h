@@ -20,12 +20,15 @@ class Client
   Client(const int& a_channel, const string& a_path, const bool& a_verbosity=false);
   ~Client();
 
+  string Get_Mode(){ return mode; }
+  
   float Request_HV_Control_Get(const string& parameter);
   void Request_HV_Control_Set(const string& parameter, const float& value);
   int Request_HV_Control_Status();
   
  protected:
-  int runnumber;
+  string mode;
+  
   string foil_name;
   int channel;
   string tester;
