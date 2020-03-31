@@ -44,7 +44,16 @@ Class for drawing.
 Class for submitting log to elog.
 
 ## Usage
-### Running Monitor
+### Using GUI
+You need to set the environmental variables first.
+<pre>
+sudo -s
+cd Macro
+source Env.sh
+</pre>
+Then run GUI, QC_UI. You can control the QC SW via the GUI. Please let me know if you find any bug or have any suggestion.
+### Using CLI
+#### Running Monitor
 You need to set the environmental variables first.
 <pre>
 sudo -s
@@ -52,7 +61,7 @@ cd Macro
 source Env.sh
 ./Run_Monitor.sh
 </pre>	
-### Running server
+#### Running server
 You shoud get su right first because CAEN wrapper library needs it. Then the environmental variables shuld be set. Now you are OK to run server. If the process is failed due to communication to HV module, just try to run one more time.
 <pre>
 sudo -s
@@ -60,7 +69,7 @@ cd Macro
 source Env.sh
 ./Run_Server.sh
 </pre>
-### Running Preparation_QC_Long (QC_Long)
+#### Running Preparation_QC_Long (QC_Long)
 Prepare other terminal. You need su right again. The environmental variables are needed again. Then you are OK to run Preparation_QC_Long (QC_Long). Run_Preparation_QC_Long.sh (Run_QC_Long.sh) will ask foil id, HV channel number, relative humidity, temperaure and your name, one by one. Type those carefully.
 <pre>
 sudo -s
@@ -69,6 +78,7 @@ source Env.sh
 ./Run_Preparation_QC_Long.sh (./Run_QC_Long.sh)
 </pre>
 You can run the Preparation_QC_Long (QC_Long) as many as HV module channel. Every client with different channel number runs independently. If the server is not running or owned HV channel by other channel process, Run_Preparation_QC_Long.sh (Run_QC_Long.sh).sh script will notice it and kill itself. Anyway you should keep focus not to make any mistake.
+
 ## Output
 Measured I-V curve will show up Output/Preparation (QC_Long) directory.
 <pre>
