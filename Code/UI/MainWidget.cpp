@@ -91,6 +91,8 @@ void MainWidget::closeEvent(QCloseEvent *event)
   if(server!=NULL) server->close();
   if(monitor!=NULL) monitor->close();
 
+  event->accept();
+
   return;
 }
 
