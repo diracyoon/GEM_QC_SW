@@ -66,9 +66,18 @@ CAENHVRESULT HV_Controller::Set(const unsigned short& channel, const string& par
   else
     {
       unsigned short ch_list[1] = {channel};
-      float value_list[1] = {value};
-      
-      CAENHVRESULT result = CAENHV_SetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+
+      CAENHVRESULT result;
+      if(parameter.compare("ImonRange")==0)
+	{
+          int value_list[1] = {(int)value};
+	  result = CAENHV_SetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+	}
+      else
+	{
+	  float value_list[1] = {value};
+	  result = CAENHV_SetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
+	}
       
       return result;
     }//normal mode
@@ -100,10 +109,18 @@ CAENHVRESULT HV_Controller::Status(const unsigned short& channel, int& value)
 
 void HV_Controller::Create_HV_Map()
 {
+  total_ch = 0;
+  
   CAENHV_GetCrateMap(handle, &n_slot, &n_ch, &model_list, &description_list, &serial_number_list, &firmware_release_min_list, &firmware_release_max_list);
 
-  cout << "Model = " << model_list << ", #Slot = " << n_slot << ", #Ch. = " << sizeof(n_ch)/sizeof(unsigned short) << endl;
-
+  cout << "Model = " << model_list << ", #Slot = " << n_slot << endl;
+  cout << "#Ch:"  << endl;
+  for(int i=0; i<n_slot; i++)
+    {
+      cout << "Slot " << i << ": " << n_ch[i] << endl;
+      total_ch += n_ch[i];
+    }
+  
   return;
 }//void HV_Controller::Cerate_HV_Map()
 

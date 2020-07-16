@@ -178,7 +178,8 @@ void Server::Initialization()
   fd_server = open(path_fifo_server.c_str(), O_RDWR);
   if(fd_server<0) throw "class Server: Can not open FIFO for server.";
 
-  max_channel = 8;
+  //obtain max channel
+  max_channel = hv_controller.Get_Total_Channel_Number();
 
   //memory allocation for client handling
   fd_client = new int[max_channel];

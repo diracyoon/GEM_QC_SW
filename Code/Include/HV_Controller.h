@@ -14,7 +14,9 @@ class HV_Controller
   CAENHVRESULT Get(const unsigned short& channel, const string& parameter, float& value);
   CAENHVRESULT Set(const unsigned short& channel, const string& parameter, const float& value);
   CAENHVRESULT Status(const unsigned short& channel, int& value);
-		      
+
+  int Get_Total_Channel_Number(){ return total_ch; }
+  
  protected:
   string port;
   
@@ -22,6 +24,7 @@ class HV_Controller
   
   int handle;
 
+  int total_ch;
   unsigned short n_slot;
   unsigned short* n_ch;
   char* model_list;

@@ -44,12 +44,10 @@ MainWidget::MainWidget(const QString &a_mode, QWidget *parent) : QWidget(parent)
      connect(tty_finder, &QProcess::readyRead, [=](){ this->Read_Process_Output(tty_finder); });
 
      QString target = path + "/Macro/TTY_Finder.sh";
-
+   
      tty_finder->start(target, QStringList());
      tty_finder->waitForFinished();
 
-     ui->text->append(tty_finder->readAll());
-     
      delete tty_finder;
 
      QString sentence = Get_Last_Sentence();
