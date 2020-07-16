@@ -22,7 +22,7 @@ else
 	
     done
 
-    if [ test "$tty" ];
+    if [[ test "$tty" ]];
     then
 	echo "Error!! Can't find device!"
 	exit
