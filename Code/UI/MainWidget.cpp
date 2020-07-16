@@ -38,6 +38,8 @@ MainWidget::MainWidget(const QString &a_mode, QWidget *parent) : QWidget(parent)
      ui->mode_indicator->setEnabled(0);
 
      //find device tty
+     ui->text->append("Finding device tty");
+     
      QProcess* tty_finder = new QProcess;
      connect(tty_finder, &QProcess::readyRead, [=](){ this->Read_Process_Output(tty_finder); });
 
