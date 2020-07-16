@@ -23,6 +23,8 @@ MainWidget::MainWidget(const QString &a_mode, QWidget *parent) : QWidget(parent)
   mode = a_mode;
   if(mode=="DEBUG")
    {
+     ui->text->append("DEBUG mode set");
+     
      ui->mode_indicator->setChecked(1);
      ui->mode_indicator->setEnabled(0);
 
@@ -30,6 +32,8 @@ MainWidget::MainWidget(const QString &a_mode, QWidget *parent) : QWidget(parent)
    }
  else
    {
+     ui->text->append("NORMAL mode set");
+     
      ui->mode_indicator->setChecked(0);
      ui->mode_indicator->setEnabled(0);
 
@@ -49,7 +53,8 @@ MainWidget::MainWidget(const QString &a_mode, QWidget *parent) : QWidget(parent)
      if(sentence.contains("Error")) return;
      else tty = sentence;
    }
-
+  ui->text->append("TTY = " + tty);
+  
   ui->chk_submit->setChecked(1);
 
   //remove fifo opened previously

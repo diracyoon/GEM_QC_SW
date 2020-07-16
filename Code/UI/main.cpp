@@ -21,6 +21,8 @@ int main(int argc, char *argv[])
 
   //mode = "DEBUG";
 
+  cout << "Mode = " << mode << endl;
+  
   QApplication a(argc, argv);
   a.setQuitOnLastWindowClosed(1);
 
