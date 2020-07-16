@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
   if(argc==1) mode = "NORMAL";
   else if(argc==2) mode = argv[1];
 
-  mode = "DEBUG";
+  //mode = "DEBUG";
 
   QApplication a(argc, argv);
   a.setQuitOnLastWindowClosed(1);
