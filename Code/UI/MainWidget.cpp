@@ -48,10 +48,12 @@ MainWidget::MainWidget(const QString &a_mode, QWidget *parent) : QWidget(parent)
      tty_finder->start(target, QStringList());
      tty_finder->waitForFinished();
 
+     ui->text->append(tty_finder->readAll());
+     
      delete tty_finder;
 
      QString sentence = Get_Last_Sentence();
-
+     
      if(sentence.contains("Error")) return;
      else tty = sentence;
    }
