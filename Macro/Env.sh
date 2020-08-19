@@ -1,6 +1,6 @@
 #!/bin/bash
 
-path=$(dirname -- $(readlink -fn -- "$0"))
+path=$(dirname -- $(readlink -fn -- "$BASH_SOURCE"))
 QC_SW_PATH=`dirname ${path}`
 
 echo $QC_SW_PATH
