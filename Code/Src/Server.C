@@ -180,7 +180,8 @@ void Server::Initialization()
 
   //obtain max channel
   max_channel = hv_controller.Get_Total_Channel_Number();
-
+  cout << "Max #Ch.: " << max_channel << endl;
+  
   //memory allocation for client handling
   fd_client = new int[max_channel];
   path_fifo_client = new string[max_channel];

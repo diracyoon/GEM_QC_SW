@@ -107,6 +107,14 @@ CAENHVRESULT HV_Controller::Status(const unsigned short& channel, int& value)
 
 //////////
 
+int HV_Controller::Get_Total_Channel_Number()
+{
+  if(mode.compare("DEBUG")==0) return 4;
+  else return total_ch;
+}//int HV_Controller::Get_Total_Channel_Number()
+
+//////////
+
 void HV_Controller::Create_HV_Map()
 {
   total_ch = 0;
