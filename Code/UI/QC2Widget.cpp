@@ -188,7 +188,8 @@ void QC2Widget::Read_Inputs()
   else if(ui->button_GE21_M6->isChecked()) foil_type = "GE21M6";
   else if(ui->button_GE21_M7->isChecked()) foil_type = "GE21M7";
   else if(ui->button_ME0->isChecked()) foil_type = "ME0";
-
+  else if(ui->button_10_10->isChecked()) foil_type = "10_10";
+  
   //batch
   batch_number = ui->edit_batch_number->text().toInt();
 
