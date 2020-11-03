@@ -5,8 +5,8 @@
 Painter::Painter(const string& a_file_path) : file_path(a_file_path)
 {
   string buf = file_path.substr(0, file_path.find_last_of('/'));
+  buf = buf.substr(0, buf.find_last_of('/'));
   process = buf.substr(buf.find_last_of('/')+1, buf.size());
-  
   fin.open(file_path);
   
   istringstream iss;
@@ -108,7 +108,7 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   //2nd yaxis
   axis = new TGaxis(0, 0, 0, 0, 0, 0, 510, "+L");
 
-  axis->SetTitle("Current (#muA)");
+  axis->SetTitle("Current (nA)");
   axis->SetTitleSize(0.04);
   axis->SetTitleFont(42);
   axis->SetLabelSize(0.04);
@@ -189,7 +189,7 @@ void Painter::Draw(TVirtualPad* pad)
   
   float x_max = time_max*1.1;
   float v_max = max(vset_max, vmon_max)*1.1;
-  float i_max = 0.01;//(imon_max+0.1)*1.1;
+  float i_max = 6;//(imon_max+0.1)*1.1;
   
   //scale graph for imon 
   float scale = v_max/i_max;
@@ -259,7 +259,8 @@ void Painter::Update()
 
       float imon;
       iss >> imon;
-
+      imon *= 1000;//to convert uA -> nA
+      
       //add point to graphs
       int n_point = gr_vset->GetN();
       gr_vset->SetPoint(n_point, time, vset);
