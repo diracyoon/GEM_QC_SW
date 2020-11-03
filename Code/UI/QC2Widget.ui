@@ -36,7 +36,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>294</width>
+     <width>299</width>
      <height>393</height>
     </rect>
    </property>
@@ -87,6 +87,13 @@
         <widget class="QRadioButton" name="button_ME0">
          <property name="text">
           <string>ME0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="button_10_10">
+         <property name="text">
+          <string>10*10</string>
          </property>
         </widget>
        </item>
