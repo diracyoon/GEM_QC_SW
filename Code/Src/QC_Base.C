@@ -79,13 +79,25 @@ void QC_Base::Initialization_HV(const string& type)
 {
   client.Request_HV_Control_Set("Pw", 1);
 
-  client.Request_HV_Control_Set("MaxV", 620);
-  client.Request_HV_Control_Set("RUp", 5);
-  client.Request_HV_Control_Set("RDwn", 50);
+  client.Request_HV_Control_Set("MaxV", 625);
+ 
+  if(type.compare("Preparation_QC_Long")==0)
+    {
+      client.Request_HV_Control_Set("RUp", 10);
+      client.Request_HV_Control_Set("RDwn", 50);
 
-  client.Request_HV_Control_Set("ImonRange", 1);
-  if(type.compare("Preparation_QC_Long")==0) client.Request_HV_Control_Set("ISet", 2);
-  else if(type.compare("QC_Long")==0) client.Request_HV_Control_Set("ISet", 2);
+      //client.Request_HV_Control_Set("ImonRange", 0);
+      client.Request_HV_Control_Set("ISet", 10);
+    }
+  else if(type.compare("QC_Long")==0)
+    {
+      client.Request_HV_Control_Set("RUp", 5);
+      client.Request_HV_Control_Set("RDwn", 50);
+  
+      
+      client.Request_HV_Control_Set("ImonRange", 0);
+      client.Request_HV_Control_Set("ISet", 2);
+    }
   
   client.Request_HV_Control_Set("Trip", 0.0);
   client.Request_HV_Control_Set("PDwn", 0);

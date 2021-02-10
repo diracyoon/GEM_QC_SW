@@ -52,14 +52,14 @@ void Monitor::Run()
 
 		  cout << "Monitor::New QC detected. Occupied channel = " << watch_result[i].channel << ", PID = " << watch_result[i].pid << ", Process = " << watch_result[i].process << endl;
 		  this_thread::sleep_for(chrono::seconds(1));
-		  
+		 
 		  chk_ch_occupied[i] = true;
 
 		  string process = watch_result[i].process.substr(watch_result[i].process.find_last_of("/")+1);
 		  		  
 		  string file_path = getenv("QC_SW_PATH");
 		  file_path +=  "/Output/" + process + "/" + watch_result[i].foil_name + "/" + watch_result[i].foil_name + "_"  + string(2 - to_string(watch_result[i].trial_number).length(), '0') + to_string(watch_result[i].trial_number) + ".result";
-		 
+
 		  painter[i] = new Painter(file_path);
 		}
 	      //ongoing measurement

@@ -189,7 +189,8 @@ void Painter::Draw(TVirtualPad* pad)
   
   float x_max = time_max*1.1;
   float v_max = max(vset_max, vmon_max)*1.1;
-  float i_max = 6;//(imon_max+0.1)*1.1;
+//  float i_max = 6;//(imon_max+0.1)*1.1;
+  float i_max = imon_max*1.1;
   
   //scale graph for imon 
   float scale = v_max/i_max;

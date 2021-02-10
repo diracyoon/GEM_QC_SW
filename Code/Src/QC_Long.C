@@ -67,7 +67,7 @@ void QC_Long::Body()
 	  if(Check_Stability()==false) stage_start = system_clock::now();
 	    
 	  float vmon = client.Request_HV_Control_Get("VMon");
-	  float imon = client.Request_HV_Control_Get(IMON);
+	  float imon = client.Request_HV_Control_Get("IMonH");
 	  
 	  //run time
 	  system_clock::time_point time_current = system_clock::now();
