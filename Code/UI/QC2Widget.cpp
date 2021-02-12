@@ -111,12 +111,26 @@ void QC2Widget::Launch_QC2()
   path = getenv("QC_SW_PATH");
 
   //check server is running
-  ui->text->append("Check server is running.");
+  ui->text->append("Checking server is running or not.");
 
+  QString target = path + "/Macro/Server_Checker.sh";
+
+  QProcess* server_checker = new QProcess;
+  connect(server_checker, &QProcess::readyRead, [=](){ this->Read_Process_Output(server_checker); });
+
+  server_checker->start(target);
+  server_checker->waitForFinished();
+  
+  QString last_sentence = Get_Last_Sentence();
+  if(last_sentence.contains("Error")) return;
+  else ui->text->append("Server is running. Let's proceed.");
+  
+  delete server_checker;
+  
   //check channel is free or not
-  ui->text->append("Check the channel is free.");
+  ui->text->append("Checking the channel is free or not.");
 
-  QString target = path + "/Macro/Channel_Checker.sh";
+  target = path + "/Macro/Channel_Checker.sh";
   QString arg = QString::number(channel);
 
   QProcess* channel_checker = new QProcess;
@@ -125,7 +139,7 @@ void QC2Widget::Launch_QC2()
   channel_checker->start(target, QStringList() << arg);
   channel_checker->waitForFinished();
 
-  QString last_sentence = Get_Last_Sentence();
+  last_sentence = Get_Last_Sentence();
   if(last_sentence.contains("Error")) return;
   else ui->text->append("The channel is free. Let's proceed.");
 
@@ -158,7 +172,9 @@ void QC2Widget::Launch_QC2()
   //start QC2
   qc2 = new QProcess;
   connect(qc2, &QProcess::readyRead, [=](){ this->Read_Process_Output(qc2); });
-
+  //connect(qc2, &QProcess::readyReadStandardError, [=](){ this->Read_Process_Output(qc2); });
+  //connect(qc2, &QProcess::readyReadStandardOutput, [=](){ this->Read_Process_Output(qc2); });
+  
   qc2->start(target, QStringList() << foil_id << QString::number(trial_number) << QString::number(channel) << QString::number(rh) << QString::number(temperature) << tester);
   qc2->waitForStarted();
 
@@ -187,6 +203,7 @@ void QC2Widget::Read_Inputs()
   else if(ui->button_GE21_M3->isChecked()) foil_type = "GE21M3";
   else if(ui->button_GE21_M6->isChecked()) foil_type = "GE21M6";
   else if(ui->button_GE21_M7->isChecked()) foil_type = "GE21M7";
+  else if(ui->button_GE21_M7S->isChecked()) foil_type = "GE21M7S";
   else if(ui->button_ME0->isChecked()) foil_type = "ME0";
   else if(ui->button_10_10->isChecked()) foil_type = "10_10";
   

@@ -48,7 +48,7 @@ void QC_Base::Finalization(const string& HV_status)
   time_t time = system_clock::to_time_t(system_clock::now());
   result_out << "End time: " << ctime(&time);
 
-  cout << "QC done." << endl;
+  cout << "QC_Base: QC done." << endl;
 
   return;
 }//void QC_Base::QC_Long_Finalization()
@@ -117,8 +117,8 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   n_trip_total++;
   n_trip_stage++;
   
-  cout << "class QC_Base, Ch# = " << channel << ": Trip!! number of trip in the stage = " << n_trip_stage << ", number of trip in whole run = " << n_trip_total << endl;
-  cout << "class QC_Base: Start recovery process." << endl;
+  cout << "QC_Base, Ch# = " << channel << ": Trip!! number of trip in the stage = " << n_trip_stage << ", number of trip in whole run = " << n_trip_total << endl;
+  cout << "QC_Base: Start recovery process." << endl;
   
   ///trip recover
   client.Request_HV_Control_Set("Pw", 0);
@@ -137,7 +137,7 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
       //voltage stabilization condition
       if(Check_Stability()==true)
 	{
-	  cout << "Recovery process done." << endl;
+	  cout << "QC_Base: Recovery process done." << endl;
 	  break;
 	}
       
@@ -152,7 +152,7 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
 
       result_out << process_duration_f << " " << vset << " " << vmon << " " << imon << endl;
       
-      cout << "Recovering trip. VSet: " << vset << ", VMon = " << vmon << endl;
+      cout << "QC_Base: Recovering trip. VSet: " << vset << ", VMon = " << vmon << endl;
             
       this_thread::sleep_for(chrono::milliseconds(500));
     }
@@ -173,7 +173,7 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
 
 void QC_Base::Read_Config_Data(const string& config_file)
 {
-  cout << "Read Config. data." << endl;
+  cout << "QC_Base: Read Config. data." << endl;
 
   string config_path = path + "/Config/" + config_file;
   

@@ -107,7 +107,7 @@ int Client::Request_HV_Control_Status()
 
 void Client::Connect_To_Server()
 {
-  cout << "Connect to server." << endl;
+  cout << "Client: Connect to server." << endl;
   
   string msg = "##HEAD## CH" + to_string(channel) + " " + path_fifo_client;
   Transmit_To_Server(msg);
@@ -124,7 +124,7 @@ void Client::Connect_To_Server()
 
 void Client::Disconnect_From_Server()
 {
-  cout << "Disconnect from server." << endl;
+  cout << "Client: Disconnect from server." << endl;
 
   string msg = "##END## CH" + to_string(channel);
   Transmit_To_Server(msg);
@@ -136,7 +136,7 @@ void Client::Disconnect_From_Server()
 
 void Client::Initialization()
 {
-  cout << "Initialize client for Ch." << channel << endl;
+  cout << "Client: Initialize client for Ch." << channel << endl;
 
   //make FIFO for client
   path_fifo_client = path + "/FIFOs/FIFO"  + to_string(channel);

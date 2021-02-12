@@ -27,7 +27,7 @@ void Preparation_QC_Long::Run()
 
 void Preparation_QC_Long::Body()
 {  
-  cout << "Start Preparation QC_Long test!!" << endl;
+  cout << "Preparation_QC_Long: Start Preparation QC_Long test!!" << endl;
 
   system_clock::time_point process_start = system_clock::now();
   
@@ -55,7 +55,7 @@ void Preparation_QC_Long::Body()
 	      
 	      if(pull_back==true)
 		{
-		  cout << "class Preparation_QC_Log, Ch# = " << channel << ": Too many trips. Pull back." << endl;
+		  cout << "Preparation_QC_Log, Ch# = " << channel << ": Too many trips. Pull back." << endl;
 		  
 		  n_trial[i]++;
 		  
@@ -64,7 +64,7 @@ void Preparation_QC_Long::Body()
 		      //turn off HV for safety
 		      client.Request_HV_Control_Set("Pw", 0);
 		      
-		      cout << "class Preparation_QC_Log, Ch# = " << channel << ": Too many trials at this stage V_Set = " << vset << ". Abort QC." << endl;
+		      cout << "Preparation_QC_Log, Ch# = " << channel << ": Too many trials at this stage V_Set = " << vset << ". Abort QC." << endl;
 		      throw "Too many trials";
 		    }
 		  

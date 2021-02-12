@@ -9,17 +9,17 @@ int main(int argc, char* argv[])
 {
   if(argc!=2&&argc!=3&&argc!=4)
     {
-      cerr << "Wrong number of argc." << endl;
-      cerr << "argv[1]: port i.e. ttyUSB0." << endl;
-      cerr << "argv[2]: mode i.e. NORMAL or DEBUG. Default is NORMAL." << endl;
-      cerr << "argv[3]: verbosity i.e. true or false. Default is false." << endl;
+      cout << "Wrong number of argc." << endl;
+      cout << "argv[1]: port i.e. ttyUSB0." << endl;
+      cout << "argv[2]: mode i.e. NORMAL or DEBUG. Default is NORMAL." << endl;
+      cout << "argv[3]: verbosity i.e. true or false. Default is false." << endl;
       exit(1);
     }
   
   char* path = getenv("QC_SW_PATH");
   if(path==NULL)
     {
-      cerr << "Enviromental variables aren't set. Source Env.sh first." << endl;
+      cout << "Enviromental variables aren't set. Source Env.sh first." << endl;
 
       return -1;
     }
@@ -41,11 +41,11 @@ int main(int argc, char* argv[])
     }
   catch(const string& error)
     {
-      cerr << error << endl;
+      cout << error << endl;
     }
   catch(const char* error)
     {
-      cerr << error << endl;
+      cout << error << endl;
     }
     
   return 0;

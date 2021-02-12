@@ -9,8 +9,8 @@ int main(int argc, char* argv[])
 {
   if(argc!=7)
     {
-      cerr << "Wrong number of argc." << endl;
-      cerr << "argv[1]: foil name, argv[2]: trial number, argv[3]: channel number, argv[4]: relative humidity, argv[5]: temperature, argv[6]: tester" << endl;
+      cout << "Wrong number of argc." << endl;
+      cout << "argv[1]: foil name, argv[2]: trial number, argv[3]: channel number, argv[4]: relative humidity, argv[5]: temperature, argv[6]: tester" << endl;
       exit(1);
     }
 
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
   char* path = getenv("QC_SW_PATH");
   if(path==NULL)
     {
-      cerr << "Enviromental variables aren't set. Source Env.sh first." << endl;
+      cout << "Enviromental variables aren't set. Source Env.sh first." << endl;
       return -1;
     }
   
@@ -35,11 +35,11 @@ int main(int argc, char* argv[])
     }
   catch(const string& error)
     {
-      cerr << error << endl;
+      cout << error << endl;
     }
   catch(const char* error)
     {
-      cerr << error << endl;
+      cout << error << endl;
     }
   
   return 0;

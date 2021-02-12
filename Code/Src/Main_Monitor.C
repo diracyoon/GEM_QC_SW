@@ -23,14 +23,14 @@ int main(int argc, char** argv)
   char* path = getenv("QC_SW_PATH");
   if(path==NULL)
     {
-      cerr << "Enviromental variables aren't set. Source Env.sh first." << endl;
+      cout << "Enviromental variables aren't set. Source Env.sh first." << endl;
       return -1;
      }
 
   if(argc!=1&&argc!=2)
     {
-      cerr << "Wrong number of argc." << endl;
-      cerr << "argc[1]: submit to e-log or not i.e. TRUE or FALSE. Default is TRUE." << endl;
+      cout << "Wrong number of argc." << endl;
+      cout << "argc[1]: submit to e-log or not i.e. TRUE or FALSE. Default is TRUE." << endl;
       exit(1);
     }
 

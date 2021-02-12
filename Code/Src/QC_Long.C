@@ -28,7 +28,7 @@ void QC_Long::Run()
 
 void QC_Long::Body()
 {
-  cout << "Start QC_Long test!!" << endl;
+  cout << "QC_Long: Start QC_Long test!!" << endl;
 
   system_clock::time_point process_start = system_clock::now();
 
@@ -56,7 +56,7 @@ void QC_Long::Body()
 		  //turn off HV for safety
 		  client.Request_HV_Control_Set("Pw", 0);
 
-		  cout << "class QC_Log, Ch# = " << channel << ": Too many trips at this stage V_Set = " << vset << ". Abort QC." << endl;
+		  cout << "QC_Logg: Ch# = " << channel << ": Too many trips at this stage V_Set = " << vset << ". Abort QC." << endl;
 		  throw "Too many trip";
 		}
 	      
