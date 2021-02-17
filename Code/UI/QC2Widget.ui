@@ -37,7 +37,7 @@
      <x>10</x>
      <y>10</y>
      <width>299</width>
-     <height>393</height>
+     <height>395</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -80,6 +80,13 @@
         <widget class="QRadioButton" name="button_GE21_M7">
          <property name="text">
           <string>GE2/1 M7</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="button_GE21_M7S">
+         <property name="text">
+          <string>GE2/1 M7S</string>
          </property>
         </widget>
        </item>

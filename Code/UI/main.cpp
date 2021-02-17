@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     {
       cerr << "Wrong number of argc." << endl;
       cerr << "argv[1]: mode i.e. NORMAL or DEBUG" << endl;
+      cerr << "argv[2]: verbosity ie true or false" << endl;
       exit(1);
     }
 
