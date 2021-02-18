@@ -70,7 +70,7 @@ CAENHVRESULT HV_Controller::Set(const unsigned short& channel, const string& par
       CAENHVRESULT result;
       if(parameter.compare("ImonRange")==0)
 	{
-          int value_list[1] = {(int)value};
+          unsigned long value_list[1] = {(unsigned long)value};
 	  result = CAENHV_SetChParam(handle, 0, parameter.c_str(), 1, ch_list, value_list);
 	}
       else

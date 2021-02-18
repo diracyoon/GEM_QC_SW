@@ -83,10 +83,10 @@ void QC_Base::Initialization_HV(const string& type)
  
   if(type.compare("Preparation_QC_Long")==0)
     {
-      client.Request_HV_Control_Set("RUp", 10);
+      client.Request_HV_Control_Set("RUp", 20);
       client.Request_HV_Control_Set("RDwn", 50);
 
-      //client.Request_HV_Control_Set("ImonRange", 0);
+      client.Request_HV_Control_Set("ImonRange", 0);//0 means high
       client.Request_HV_Control_Set("ISet", 10);
     }
   else if(type.compare("QC_Long")==0)
@@ -95,7 +95,7 @@ void QC_Base::Initialization_HV(const string& type)
       client.Request_HV_Control_Set("RDwn", 50);
   
       
-      client.Request_HV_Control_Set("ImonRange", 0);
+      client.Request_HV_Control_Set("ImonRange", 1);//1 means low
       client.Request_HV_Control_Set("ISet", 2);
     }
   

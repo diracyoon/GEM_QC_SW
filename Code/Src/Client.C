@@ -75,7 +75,7 @@ void Client::Request_HV_Control_Set(const string& parameter, const float& value)
 
 int Client::Request_HV_Control_Status()
 {
-  for(int i=0; i<2; i++)
+  for(int i=0; i<10; i++)
     {
       string transmit = "##STATUS## CH" + to_string(channel);
       Transmit_To_Server(transmit);
