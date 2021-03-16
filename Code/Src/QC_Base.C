@@ -21,8 +21,11 @@ bool QC_Base::Check_Stability()
 
   bool ramping_up = status & 0x2;
   bool ramping_down = status & 0x4;
-
-  if(ramping_up||ramping_down) return false;
+  bool ovv = status & 0x10;
+  bool udv = status & 0x20;
+  bool trip = status & 0x80;
+  
+  if(ramping_up||ramping_down||ovv||udv||trip) return false;
   else return true;
 }//bool QC_Base::Check_Stability()
 
@@ -79,23 +82,25 @@ void QC_Base::Initialization_HV(const string& type)
 {
   client.Request_HV_Control_Set("Pw", 1);
 
-  client.Request_HV_Control_Set("MaxV", 625);
- 
   if(type.compare("Preparation_QC_Long")==0)
     {
+      client.Request_HV_Control_Set("MaxV", 625);
+      
       client.Request_HV_Control_Set("RUp", 20);
-      client.Request_HV_Control_Set("RDwn", 50);
+      client.Request_HV_Control_Set("RDwn", 10);
 
       client.Request_HV_Control_Set("ImonRange", 0);//0 means high
       client.Request_HV_Control_Set("ISet", 10);
     }
   else if(type.compare("QC_Long")==0)
     {
+      client.Request_HV_Control_Set("MaxV", 605);
+        
       client.Request_HV_Control_Set("RUp", 5);
-      client.Request_HV_Control_Set("RDwn", 50);
-  
-      
-      client.Request_HV_Control_Set("ImonRange", 1);//1 means low
+      client.Request_HV_Control_Set("RDwn", 10);
+        
+      //client.Request_HV_Control_Set("ImonRange", 1);//1 means low
+      client.Request_HV_Control_Set("ImonRange", 0);//0 means high
       client.Request_HV_Control_Set("ISet", 2);
     }
   
@@ -126,6 +131,10 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
 
   client.Request_HV_Control_Set("VSet", vset);
 
+  //set ImonRange=High to prevent overvoltage                                              
+  client.Request_HV_Control_Set("ImonRange", 0);
+	      
+  
   this_thread::sleep_for(chrono::seconds(5));
   
   //voltage recover
@@ -162,6 +171,9 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   duration<float> duration = time_end - time_start;
   recovery_duration = duration.count();
 
+  //return to ImonRange=Low                                                                
+  client.Request_HV_Control_Set("ImonRange", 1);
+  
   //pull back
   if(mode_pull_back==true && 3<n_trip_stage) return true;
   else return false;

@@ -32,6 +32,8 @@ void QC_Long::Body()
 
   system_clock::time_point process_start = system_clock::now();
 
+  bool stability_flipflop = false;
+  bool mode_imonrange = false;
   for(int i=0; i<vec_config_data.size(); i++)
     {
       system_clock::time_point stage_start = system_clock::now();
@@ -41,7 +43,7 @@ void QC_Long::Body()
       
       float trip_duration = 0;
       n_trip_stage = 0;
-      
+
       while(1)
 	{
 	  //trip check
@@ -64,11 +66,33 @@ void QC_Long::Body()
 	    }
 
 	  //check HV stability. If HV is on ramping up or down, don't count time.
-	  if(Check_Stability()==false) stage_start = system_clock::now();
-	    
-	  float vmon = client.Request_HV_Control_Get("VMon");
-	  float imon = client.Request_HV_Control_Get("IMonH");
+	  if(Check_Stability()==false)
+	    {
+	      if(stability_flipflop==true)
+		{
+		  cout << "Change ImonRange to High" << endl;
+		  mode_imonrange = false;
+		  client.Request_HV_Control_Set("ImonRange", 0);
+		  stability_flipflop=false;
+		}
+	      stage_start = system_clock::now();
+	    }
+	  else if(Check_Stability()==true)
+	    {
+	      if(stability_flipflop==false)
+		{
+		  cout << "change ImonRange to Low" << endl;
+		  mode_imonrange = true;
+		  client.Request_HV_Control_Set("ImonRange", 1);
+		  stability_flipflop = true;
+		}
+	    }
 	  
+	  float vmon = client.Request_HV_Control_Get("VMon");
+	  float imon;
+	  if(mode_imonrange==false) imon = client.Request_HV_Control_Get("IMonH"); 
+	  else if(mode_imonrange==true) imon = client.Request_HV_Control_Get("IMonL");
+
 	  //run time
 	  system_clock::time_point time_current = system_clock::now();
 	  
@@ -79,7 +103,7 @@ void QC_Long::Body()
 	  float stage_duration_f = stage_duration.count();
 	  float stage_net_duration_f = stage_duration_f - trip_duration;
 	  	  
-	  result_out << process_duration_f << " " << " " << vset << " " << vmon << " " << imon << endl;
+	  if((int)process_duration_f%1==0) result_out << process_duration_f << " " << " " << vset << " " << vmon << " " << imon << endl;
 	  
 	  if((int)process_duration_f%10==0) cout << "Process duration = " << process_duration_f << "s, stage duration = " << stage_net_duration_f << "s, V_set = " << vset << "V, V_Mon = " << vmon << "V, I_Mon = " << imon << "uA" << endl;
 

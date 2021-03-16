@@ -74,6 +74,7 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   gr_vmon = new TGraphErrors();
   gr_imon = new TGraphErrors();
   gr_imon_scale = new TGraphErrors();
+  gr_imon_over_scale = new TGraphErrors();
   
   //graph style
   gr_vset->SetTitle(Form("Foil: %s, Process: %s", foil_name.c_str(), process.c_str()));
@@ -84,27 +85,26 @@ Painter::Painter(const string& a_file_path) : file_path(a_file_path)
   gr_vset->GetYaxis()->SetTitleSize(0.04);
   gr_vset->GetYaxis()->SetLabelSize(0.04);
     
-  gr_vset->SetMarkerStyle(20);
   gr_vset->SetMarkerColor(kRed);
   gr_vset->SetLineColor(kRed);
   gr_vset->SetLineWidth(2);
   gr_vset->SetMarkerStyle(34);
-  gr_vset->SetMarkerColor(kRed);
-  
-  gr_vmon->SetMarkerStyle(20);
+   
   gr_vmon->SetMarkerColor(kOrange);
   gr_vmon->SetLineColor(kOrange);
   gr_vmon->SetLineWidth(2);
   gr_vmon->SetMarkerStyle(29);
-  gr_vmon->SetMarkerColor(kOrange);
-  
-  gr_imon_scale->SetMarkerStyle(20);
+   
   gr_imon_scale->SetMarkerColor(kBlue);
   gr_imon_scale->SetLineColor(kBlue);
   gr_imon_scale->SetLineWidth(2);
   gr_imon_scale->SetMarkerStyle(20);
-  gr_imon_scale->SetMarkerColor(kBlue);
-  
+ 
+  gr_imon_over_scale->SetMarkerColor(6);
+  gr_imon_over_scale->SetLineColor(6);
+  gr_imon_over_scale->SetLineWidth(2);
+  gr_imon_over_scale->SetMarkerStyle(22);
+   
   //2nd yaxis
   axis = new TGaxis(0, 0, 0, 0, 0, 0, 510, "+L");
 
@@ -167,6 +167,7 @@ Painter::~Painter()
   delete gr_vmon;
   delete gr_imon;
   delete gr_imon_scale;
+  delete gr_imon_over_scale;
   delete axis;
   delete latex0;
   delete latex1;
@@ -189,20 +190,41 @@ void Painter::Draw(TVirtualPad* pad)
   
   float x_max = time_max*1.1;
   float v_max = max(vset_max, vmon_max)*1.1;
-//  float i_max = 6;//(imon_max+0.1)*1.1;
-  float i_max = imon_max*1.1;
+  float i_max = 6;//(imon_max+0.1)*1.1;
+  //float i_max = imon_max*1.1;
   
-  //scale graph for imon 
+  //scale graph for imon
   float scale = v_max/i_max;
   int n_point = gr_imon->GetN();
   double* time = gr_imon->GetX();
   double* imon = gr_imon->GetY();
-  for(int i=0; i<n_point; i++) gr_imon_scale->SetPoint(i, time[i], scale*imon[i]);
+
+  //reset
+  //for(int i=0;i<gr_imon_scale->GetN(); i++) gr_imon_scale->RemovePoint(i);
+  //for(int i=0;i<gr_imon_over_scale->GetN(); i++) gr_imon_over_scale->RemovePoint(i);
+  gr_imon_scale->Set(0);
+  gr_imon_over_scale->Set(0);
+  
+  //fill
+  for(int i=0; i<n_point; i++)
+    {
+      if(imon[i]<i_max)
+	{
+	  int index = gr_imon_scale->GetN();
+	  gr_imon_scale->SetPoint(index, time[i], scale*imon[i]);
+	}
+      else
+	{
+	  int index = gr_imon_over_scale->GetN();
+	  gr_imon_over_scale->SetPoint(index, time[i], scale*i_max*0.99);
+	}
+    }
   
   //multi graph
   gr_vset->Draw("AP");
   gr_vmon->Draw("SAMEP");
   gr_imon_scale->Draw("SAMEP");
+  gr_imon_over_scale->Draw("SAMEP");
   
   //axis range
   gr_vset->GetXaxis()->SetRangeUser(0, x_max);

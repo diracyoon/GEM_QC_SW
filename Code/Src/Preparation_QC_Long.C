@@ -82,6 +82,7 @@ void Preparation_QC_Long::Body()
 	  
 	  float vmon = client.Request_HV_Control_Get("VMon");
 	  imon = client.Request_HV_Control_Get("IMonH");
+	  //imon = client.Request_HV_Control_Get("IMonL");
 
 	  //current stability check. if current is not stable within 20%, reset stage start time  
 	  if((0.2<fabs(imon_old-imon)/imon) && imon>0.005) stage_start = system_clock::now();

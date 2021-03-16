@@ -68,7 +68,8 @@ Submitter::Submitter(const string& a_foil_name, const string& a_process, const i
   
   //result png file
   command += " -f " + path + ".png";
-  
+
+  cout << command << endl;
   system(command.c_str());
 }//Submitter::Submitter(const Watch_Result& a_watch_result)
 
