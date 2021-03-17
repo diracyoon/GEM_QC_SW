@@ -109,8 +109,8 @@ void QC_Long::Body()
 	  duration<float> stage_duration = time_current - stage_start;
 
 	  float process_duration_f = process_duration.count();
-	  float stage_duration_f = stage_duration.count();
-	  float stage_net_duration_f = stage_duration_f - trip_duration;
+	  float stage_net_duration_f = stage_duration.count();
+	  //float stage_net_duration_f = stage_duration_f - trip_duration;
 	  	  
 	  result_out << process_duration_f << " " << " " << vset << " " << vmon << " " << imon << endl;
 	  
