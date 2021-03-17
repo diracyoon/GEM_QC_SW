@@ -21,8 +21,10 @@ Submitter::Submitter(const string& a_foil_name, const string& a_process, const i
   
   process = process.substr(process.find_last_of("/")+1);
 
-  string path = getenv("QC_SW_PATH");
-  path += "/Output/" + process + "/" + foil_name + "/" + foil_name + "_"  + string(2 - to_string(trial_number).length(), '0') + to_string(trial_number);
+  working_dir = getenv("QC_SW_PATH");
+  working_dir += "/Output/" + process + "/" + foil_name + "/";
+  
+  string path = working_dir + foil_name + "_"  + string(2 - to_string(trial_number).length(), '0') + to_string(trial_number); 
   
   string command = "elog";
 
@@ -62,14 +64,20 @@ Submitter::Submitter(const string& a_foil_name, const string& a_process, const i
   //subject
   string subject = foil_name + "_" + to_string(trial_number);
   command += " -a Subject=" + subject;
-  
-  //result tex file
-  command += " -m " + path + ".result";
-  
+
+  //message file
+  MSG_Maker();
+
+  command += " -m " + working_dir + "MSG";
+
   //result png file
   command += " -f " + path + ".png";
+  
+  //result tex file
+  command += " -f " + path + ".result";
 
   cout << command << endl;
+
   system(command.c_str());
 }//Submitter::Submitter(const Watch_Result& a_watch_result)
 
@@ -81,3 +89,15 @@ Submitter::~Submitter()
 
 //////////
 
+void Submitter::MSG_Maker()
+{
+  msg.open(working_dir+"MSG");
+  msg << foil_name << endl;
+  msg << trial_number << endl;
+
+  msg.close();
+  
+  return;
+}//void Submitter::MSG_Maker()
+
+//////////

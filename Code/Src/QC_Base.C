@@ -4,6 +4,7 @@
 
 QC_Base::QC_Base(const string& a_foil_name, const int& a_trial_number, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : foil_name(a_foil_name), trial_number(a_trial_number), channel(a_channel), rh(a_rh), temp(a_temp), tester(a_tester), path(a_path), client(a_channel, a_path, a_verbosity)
 {
+  mode_imonrange= false;
 }//QC_Base::QC_Base()
 
 //////////
@@ -15,7 +16,7 @@ QC_Base::~QC_Base()
 
 //////////
 
-bool QC_Base::Check_Stability()
+void QC_Base::Check_Stability(bool& stability, bool& reset)
 {
   int status = client.Request_HV_Control_Status();
 
@@ -25,9 +26,14 @@ bool QC_Base::Check_Stability()
   bool udv = status & 0x20;
   bool trip = status & 0x80;
   
-  if(ramping_up||ramping_down||ovv||udv||trip) return false;
-  else return true;
-}//bool QC_Base::Check_Stability()
+  if(ramping_up||ramping_down||ovv||udv||trip) stability = false;
+  else stability = true;
+
+  if(ramping_up||ramping_down||trip) reset = true;
+  else reset = false;
+
+  return;
+}//void QC_Base::Check_Stability(bool& stability, bool& reset)
 
 //////////
 
@@ -124,18 +130,19 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   
   cout << "QC_Base, Ch# = " << channel << ": Trip!! number of trip in the stage = " << n_trip_stage << ", number of trip in whole run = " << n_trip_total << endl;
   cout << "QC_Base: Start recovery process." << endl;
+
+  //pull back
+  if(mode_pull_back==true && 3<n_trip_stage) return true;
+
+  //set ImonRange=High to prevent overvoltage
+  Set_IMonRange("HIGH");
   
   ///trip recover
   client.Request_HV_Control_Set("Pw", 0);
+  this_thread::sleep_for(chrono::seconds(1));
   client.Request_HV_Control_Set("Pw", 1);
 
   client.Request_HV_Control_Set("VSet", vset);
-
-  //set ImonRange=High to prevent overvoltage                                              
-  client.Request_HV_Control_Set("ImonRange", 0);
-	      
-  
-  this_thread::sleep_for(chrono::seconds(5));
   
   //voltage recover
   while(1)
@@ -144,7 +151,11 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
       if(Check_Trip()==true) return Recover_Trip(vset, process_start, recovery_duration, mode_pull_back);
 
       //voltage stabilization condition
-      if(Check_Stability()==true)
+      bool stability;
+      bool reset;
+      Check_Stability(stability, reset);
+
+      if(stability==true)
 	{
 	  cout << "QC_Base: Recovery process done." << endl;
 	  break;
@@ -172,12 +183,8 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   recovery_duration = duration.count();
 
   //return to ImonRange=Low                                                                
-  client.Request_HV_Control_Set("ImonRange", 1);
+  Set_IMonRange("LOW");
   
-  //pull back
-  if(mode_pull_back==true && 3<n_trip_stage) return true;
-  else return false;
-
   return false;
 }//float QC_Base::Recover_Trip(const float& vset)
   
@@ -250,6 +257,31 @@ void QC_Base::Result_Log_Maker(const string& type)
   result_out << "##############################" << endl;
 
   return;
-}
+}//void QC_Base::Result_Log_Maker(const string& type)
+
+//////////
+
+void QC_Base::Set_IMonRange(const string& mode)
+{
+  if(mode.compare("LOW")==0)
+    {
+      cout << "Change ImonRange to Low." << endl;
+
+      mode_imonrange = true;
+      client.Request_HV_Control_Set("ImonRange", 1);
+    }
+  else if(mode.compare("HIGH")==0)
+    {
+      cout << "Change ImonRange to High." << endl;
+
+      mode_imonrange = false;
+      client.Request_HV_Control_Set("ImonRange", 0);
+    }
+  else cout << "Set_IMonRange: Wrong argument." << endl;
+  
+  this_thread::sleep_for(chrono::seconds(1));
+  
+  return;
+}//void QC_Base::Set_IMonRange(const string& mode)
 
 //////////

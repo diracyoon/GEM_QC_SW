@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <fstream>
 
 using namespace std;
 
@@ -14,4 +15,10 @@ class Submitter
   string foil_name;
   string process;
   int trial_number;
+
+  string working_dir;
+  
+  ofstream msg;
+  
+  void MSG_Maker();
 };

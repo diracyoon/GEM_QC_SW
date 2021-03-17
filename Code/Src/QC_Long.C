@@ -33,10 +33,12 @@ void QC_Long::Body()
   system_clock::time_point process_start = system_clock::now();
 
   bool stability_flipflop = false;
-  bool mode_imonrange = false;
   for(int i=0; i<vec_config_data.size(); i++)
     {
       system_clock::time_point stage_start = system_clock::now();
+
+      //To avoid the OVV issue
+      Set_IMonRange("HIGH");
 
       float vset = Get_VSet(i);
       client.Request_HV_Control_Set("VSet", vset);
@@ -51,7 +53,7 @@ void QC_Long::Body()
 	    {
 	      float recovery_duration;
 	      bool turn_off = Recover_Trip(vset, process_start, recovery_duration, true);
-
+	      
 	      //if trip ocurrs more than three times, abort QC
 	      if(turn_off==true)
 		{
@@ -61,30 +63,37 @@ void QC_Long::Body()
 		  cout << "QC_Logg: Ch# = " << channel << ": Too many trips at this stage V_Set = " << vset << ". Abort QC." << endl;
 		  throw "Too many trip";
 		}
-	      
+
+	      //obsolete
 	      trip_duration += recovery_duration;
+
+	      //reset stage duration
+	      stage_start = system_clock::now();
 	    }
 
 	  //check HV stability. If HV is on ramping up or down, don't count time.
-	  if(Check_Stability()==false)
+	  bool stability;
+	  bool reset;
+	  Check_Stability(stability, reset);
+
+	  //unstable
+	  if(stability==false)
 	    {
 	      if(stability_flipflop==true)
 		{
-		  cout << "Change ImonRange to High" << endl;
-		  mode_imonrange = false;
-		  client.Request_HV_Control_Set("ImonRange", 0);
 		  stability_flipflop=false;
+		  Set_IMonRange("HIGH");
 		}
-	      stage_start = system_clock::now();
+
+	      //reset stage duration
+	      if(reset==true) stage_start = system_clock::now();
 	    }
-	  else if(Check_Stability()==true)
+	  else if(stability==true)
 	    {
 	      if(stability_flipflop==false)
 		{
-		  cout << "change ImonRange to Low" << endl;
-		  mode_imonrange = true;
-		  client.Request_HV_Control_Set("ImonRange", 1);
 		  stability_flipflop = true;
+		  Set_IMonRange("LOW");
 		}
 	    }
 	  
@@ -103,7 +112,7 @@ void QC_Long::Body()
 	  float stage_duration_f = stage_duration.count();
 	  float stage_net_duration_f = stage_duration_f - trip_duration;
 	  	  
-	  if((int)process_duration_f%1==0) result_out << process_duration_f << " " << " " << vset << " " << vmon << " " << imon << endl;
+	  result_out << process_duration_f << " " << " " << vset << " " << vmon << " " << imon << endl;
 	  
 	  if((int)process_duration_f%10==0) cout << "Process duration = " << process_duration_f << "s, stage duration = " << stage_net_duration_f << "s, V_set = " << vset << "V, V_Mon = " << vmon << "V, I_Mon = " << imon << "uA" << endl;
 

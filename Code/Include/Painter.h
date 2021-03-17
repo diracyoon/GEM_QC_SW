@@ -41,6 +41,7 @@ class Painter
   TGraphErrors* gr_vmon;
   TGraphErrors* gr_imon;
   TGraphErrors* gr_imon_scale;
+  TGraphErrors* gr_imon_over_scale;
   
   TGaxis* axis;
   
