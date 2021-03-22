@@ -125,6 +125,7 @@ void Preparation_QC_Long::Body()
 
 void Preparation_QC_Long::Initialization_HV()
 {
+  client.Request_HV_Control_Set("Pw", 0);
   client.Request_HV_Control_Set("Pw", 1);
 
   client.Request_HV_Control_Set("MaxV", 625);
