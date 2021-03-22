@@ -13,6 +13,7 @@ class QC_Long : public QC_Base
   
  protected:
   void Body();
+  void Initialization_HV();
 };
 
 #endif /* __QC_Long_h__ */

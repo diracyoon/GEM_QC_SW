@@ -15,6 +15,7 @@ class Preparation_QC_Long : public QC_Base
   
  protected:
   void Body(); 
+  virtual void Initialization_HV();
 };
 
 #endif /* __Preparation_QC_Long_h__ */

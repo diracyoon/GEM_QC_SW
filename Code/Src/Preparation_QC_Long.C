@@ -4,6 +4,7 @@
 
 Preparation_QC_Long::Preparation_QC_Long(const string& a_foil_name, const int& a_trial_number, const int& a_channel, const float& a_rh, const float& a_temp, const string& a_tester, const string& a_path, const bool& a_verbosity) : QC_Base(a_foil_name, a_trial_number, a_channel, a_rh, a_temp, a_tester, a_path, a_verbosity)
 {
+  type = "Preparation_QC_Long";
 }//Preparation_QC_Long::Preparation_QC_Long()
 
 //////////
@@ -16,7 +17,7 @@ Preparation_QC_Long::~Preparation_QC_Long()
 
 void Preparation_QC_Long::Run()
 {
-  Initialization("Preparation_QC_Long");
+  Initialization();
   Body();
   Finalization("ON");
   
@@ -119,5 +120,28 @@ void Preparation_QC_Long::Body()
 
   return;
 }//void Preparation_QC_Long::Body()
+
+//////////
+
+void Preparation_QC_Long::Initialization_HV()
+{
+  client.Request_HV_Control_Set("Pw", 1);
+
+  client.Request_HV_Control_Set("MaxV", 625);
+
+  client.Request_HV_Control_Set("RUp", 20);
+  client.Request_HV_Control_Set("RDwn", 10);
+
+  client.Request_HV_Control_Set("ImonRange", 0);//0 means high
+  client.Request_HV_Control_Set("ISet", 10);
+  
+  client.Request_HV_Control_Set("Trip", 0.0);
+  client.Request_HV_Control_Set("PDwn", 0);
+  
+  n_trip_total = 0;
+  n_trip_stage = 0;
+    
+  return;
+}//void Preparation_QC_Long::Initialization_HV()
 
 //////////

@@ -72,52 +72,15 @@ float QC_Base::Get_VSet(const int& index)
 
 //////////
 
-void QC_Base::Initialization(const string& type)
+void QC_Base::Initialization()
 {
-  Result_Log_Maker(type);
-  Read_Config_Data(type+".config");
+  Result_Log_Maker();
+  Read_Config_Data();
 
-  Initialization_HV(type);
+  Initialization_HV();
 
   return;
 }//void QC_Base::Initialization(const string& type)
-
-//////////
-
-void QC_Base::Initialization_HV(const string& type)
-{
-  client.Request_HV_Control_Set("Pw", 1);
-
-  if(type.compare("Preparation_QC_Long")==0)
-    {
-      client.Request_HV_Control_Set("MaxV", 625);
-      
-      client.Request_HV_Control_Set("RUp", 20);
-      client.Request_HV_Control_Set("RDwn", 10);
-
-      client.Request_HV_Control_Set("ImonRange", 0);//0 means high
-      client.Request_HV_Control_Set("ISet", 10);
-    }
-  else if(type.compare("QC_Long")==0)
-    {
-      client.Request_HV_Control_Set("MaxV", 605);
-        
-      client.Request_HV_Control_Set("RUp", 5);
-      client.Request_HV_Control_Set("RDwn", 10);
-        
-      //client.Request_HV_Control_Set("ImonRange", 1);//1 means low
-      client.Request_HV_Control_Set("ImonRange", 0);//0 means high
-      client.Request_HV_Control_Set("ISet", 2);
-    }
-  
-  client.Request_HV_Control_Set("Trip", 0.0);
-  client.Request_HV_Control_Set("PDwn", 0);
-  
-  n_trip_total = 0;
-  n_trip_stage = 0;
-  
-  return;
-}//void QC_Base::Initialization_HV()
 
 //////////
 
@@ -135,7 +98,7 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   if(mode_pull_back==true && 3<n_trip_stage) return true;
 
   //set ImonRange=High to prevent overvoltage
-  Set_IMonRange("HIGH");
+  if(type.compare("QC_Long")==0) Set_IMonRange("HIGH");
   
   ///trip recover
   client.Request_HV_Control_Set("Pw", 0);
@@ -182,23 +145,23 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   duration<float> duration = time_end - time_start;
   recovery_duration = duration.count();
 
-  //return to ImonRange=Low                                                                
-  Set_IMonRange("LOW");
-  
+  //return to ImonRange=Low  
+  if(type.compare("QC_Long")==0) Set_IMonRange("LOW");                                                                 
   return false;
 }//float QC_Base::Recover_Trip(const float& vset)
   
 //////////
 
-void QC_Base::Read_Config_Data(const string& config_file)
+void QC_Base::Read_Config_Data()
 {
   cout << "QC_Base: Read Config. data." << endl;
 
+  string config_file = type + ".config";
   string config_path = path + "/Config/" + config_file;
   
   ifstream fin_config;
   fin_config.open(config_path);
-  if(!fin_config.is_open()) throw "class Client: Can not find the config file.";
+  if(!fin_config.is_open()) throw "class QC_Base: Can not find the config file.";
 
   result_out << "Read config file " << config_file << endl;
   
@@ -229,7 +192,7 @@ void QC_Base::Read_Config_Data(const string& config_file)
 
 //////////
 
-void QC_Base::Result_Log_Maker(const string& type)
+void QC_Base::Result_Log_Maker()
 {
   path_result = path;
   path_result += "/Output/" + type + "/" + foil_name + "/" + foil_name + "_";

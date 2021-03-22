@@ -2,6 +2,12 @@
 
 //////////
 
+Client::Client()
+{
+}//Client::Client()
+
+//////////
+
 Client::Client(const int& a_channel, const string& a_path, const bool& a_verbosity) : channel(a_channel), path(a_path), verbosity(a_verbosity)
 {  
   Initialization();
@@ -19,6 +25,53 @@ Client::~Client()
 
   unlink(path_fifo_client.c_str());
 }//Client::~Client()
+
+//////////
+
+void Client::Connect_To_Server()
+{
+  cout << "Client: Connect to server." << endl;
+  
+  string msg = "##HEAD## CH" + to_string(channel) + " " + path_fifo_client;
+  Transmit_To_Server(msg);
+  
+  msg = Receive_From_Server();
+
+  //mode
+  mode = msg.substr(msg.find_last_of("=")+1);
+
+  return;
+}//void Client::Connect_To_Server()
+
+//////////
+
+void Client::Initialization()
+{
+  cout << "Client: Initialize client for Ch." << channel << endl;
+
+  //make FIFO for client
+  path_fifo_client = path + "/FIFOs/FIFO"  + to_string(channel);
+  if(mkfifo(path_fifo_client.c_str(), 0666)==-1)
+    {
+      string error = "class Client: Can not make FIFO for client Ch" + to_string(channel) + ". Remove previous FIFO first.";
+      throw error;
+    }
+  
+  //open FIFO for client
+  fd_client = open(path_fifo_client.c_str(), O_RDWR);
+  if(fd_client<0)
+    {
+      string error = "class Client: Can not open FIFO for client Ch" + to_string(channel) + ".";
+      throw error;
+    }
+  
+  //open fifo for server
+  path_fifo_server = path + "/FIFOs/FIFO";
+  fd_server = open(path_fifo_server.c_str(), O_WRONLY);//, O_NONBLOCK);   
+  if(fd_server<0) throw "class Client: Can not open FIFO for server.";
+  
+  return;
+}//void Client::Initialization()
 
 //////////
 
@@ -105,23 +158,6 @@ int Client::Request_HV_Control_Status()
 
 //////////
 
-void Client::Connect_To_Server()
-{
-  cout << "Client: Connect to server." << endl;
-  
-  string msg = "##HEAD## CH" + to_string(channel) + " " + path_fifo_client;
-  Transmit_To_Server(msg);
-  
-  msg = Receive_From_Server();
-
-  //mode
-  mode = msg.substr(msg.find_last_of("=")+1);
-
-  return;
-}//void Client::Connect_To_Server()
-
-//////////
-
 void Client::Disconnect_From_Server()
 {
   cout << "Client: Disconnect from server." << endl;
@@ -131,36 +167,6 @@ void Client::Disconnect_From_Server()
   
   return;
 }//void Client::Disconnect_From_Server()
-
-//////////
-
-void Client::Initialization()
-{
-  cout << "Client: Initialize client for Ch." << channel << endl;
-
-  //make FIFO for client
-  path_fifo_client = path + "/FIFOs/FIFO"  + to_string(channel);
-  if(mkfifo(path_fifo_client.c_str(), 0666)==-1)
-    {
-      string error = "class Client: Can not make FIFO for client Ch" + to_string(channel) + ". Remove previous FIFO first.";
-      throw error;
-    }
-  
-  //open FIFO for client
-  fd_client = open(path_fifo_client.c_str(), O_RDWR);
-  if(fd_client<0)
-    {
-      string error = "class Client: Can not open FIFO for client Ch" + to_string(channel) + ".";
-      throw error;
-    }
-  
-  //open fifo for server
-  path_fifo_server = path + "/FIFOs/FIFO";
-  fd_server = open(path_fifo_server.c_str(), O_WRONLY);//, O_NONBLOCK);   
-  if(fd_server<0) throw "class Client: Can not open FIFO for server.";
-  
-  return;
-}//void Client::Initialization()
 
 //////////
 
