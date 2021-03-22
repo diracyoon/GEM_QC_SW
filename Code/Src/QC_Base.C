@@ -102,10 +102,13 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
   
   ///trip recover
   client.Request_HV_Control_Set("Pw", 0);
-  this_thread::sleep_for(chrono::seconds(1));
-  client.Request_HV_Control_Set("Pw", 1);
+  this_thread::sleep_for(chrono::seconds(5));
 
+  client.Request_HV_Control_Set("Pw", 1);
+  this_thread::sleep_for(chrono::seconds(5));
+  
   client.Request_HV_Control_Set("VSet", vset);
+  this_thread::sleep_for(chrono::seconds(5));
   
   //voltage recover
   while(1)
@@ -147,6 +150,7 @@ bool QC_Base::Recover_Trip(const float& vset, const system_clock::time_point& pr
 
   //return to ImonRange=Low  
   if(type.compare("QC_Long")==0) Set_IMonRange("LOW");                                                                 
+
   return false;
 }//float QC_Base::Recover_Trip(const float& vset)
   
